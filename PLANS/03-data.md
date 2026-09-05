@@ -1,7 +1,7 @@
 # 03 — Data
 
 **Parent:** [`FAREBI.md`](../FAREBI.md) · **Phase:** 2 · **Depends on:** 01, 02
-**Status:** ⬜ Not started
+**Status:** In progress — capture kit written (see `data/capture_campaign/`), recruiting unblocked; pipeline code not started
 
 > Every number the project ever reports is bounded by the quality of this phase. A model
 > trained on pristine FFHQ reals versus PNG fakes will score 99% and be worthless in

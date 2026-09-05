@@ -15,6 +15,7 @@ is ever written here** (non-negotiable #7: zero retention of submitted media).
 | `processed/`  | Cleaned, normalised, feature-ready datasets.                  |
 | `manifests/`  | Per-dataset manifests: source, licence, consent, row counts.  |
 | `splits/`     | Identity-disjoint, source-grouped train/val/test splits.      |
+| `capture_campaign/` | Self-capture kit: `PROTOCOL.md`, `CONSENT_TEMPLATE.md` (legal review required before use), `shot_log_template.csv`. |
 
 ## Hard rules (see `FAREBI.md` non-negotiables)
 
@@ -43,3 +44,8 @@ and requires no download.
 
 This scaffolding predates Phase 03. The manifest schema and split tooling are
 designed in `PLANS/03-data.md` and implemented there, not here.
+
+Recruiting kit (`data/capture_campaign/`) written 2026-09-05: protocol, consent
+template (legal review required before any collection), shot-log template.
+No captures collected yet — consent status per source will be recorded here
+once recruiting starts.
