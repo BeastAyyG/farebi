@@ -1,0 +1,198 @@
+/* =====================================================================
+   Motion layer
+   ---------------------------------------------------------------------
+   Rules this file obeys:
+     1. Motion carries meaning — arrival, magnitude, or state change.
+        Nothing loops forever except genuine progress indicators.
+     2. Every animation is disabled wholesale by the reduced-motion block
+        at the bottom of index.css. No exceptions, no opt-outs.
+     3. Nothing animates a value a reviewer has to read. Bars grow, but
+        the numbers beside them are correct on the first painted frame.
+   ===================================================================== */
+
+@keyframes farebi-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes farebi-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes farebi-slide-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-6px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes farebi-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Loading shimmer for skeleton blocks. */
+@keyframes farebi-shimmer {
+  from {
+    background-position: -140% 0;
+  }
+  to {
+    background-position: 240% 0;
+  }
+}
+
+/* One-shot halo behind the verdict glyph when a result lands. */
+@keyframes farebi-halo {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.7);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+/* Radar polygon draw-on. */
+@keyframes farebi-draw {
+  from {
+    stroke-dashoffset: var(--dash, 1000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes farebi-scan {
+  from {
+    transform: translateY(-120%);
+  }
+  to {
+    transform: translateY(520%);
+  }
+}
+
+@layer utilities {
+  /* Entrance. `--delay` is set inline by <Reveal> to stagger a column. */
+  .a-rise {
+    animation: farebi-rise var(--motion-slow) var(--ease) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .a-pop {
+    animation: farebi-pop var(--motion-slow) var(--ease-spring) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .a-slide-in {
+    animation: farebi-slide-in var(--motion-slow) var(--ease) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .a-fade {
+    animation: farebi-fade var(--motion-slow) var(--ease) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .a-halo {
+    animation: farebi-halo 900ms var(--ease) 120ms both;
+  }
+
+  .a-scan {
+    animation: farebi-scan 2.4s var(--ease) infinite;
+  }
+
+  /* Bars and markers: long, eased travel so magnitude is legible. */
+  .a-bar {
+    transition:
+      width var(--motion-bar) var(--ease),
+      left var(--motion-bar) var(--ease),
+      background-color var(--motion) var(--ease);
+  }
+
+  .a-marker {
+    transition: left var(--motion-bar) var(--ease-spring);
+  }
+
+  .a-draw {
+    animation: farebi-draw 1100ms var(--ease) 160ms both;
+  }
+
+  /* Cards lift very slightly on hover — enough to feel alive, not enough
+     to imply one card outranks another. */
+  .a-lift {
+    transition:
+      box-shadow var(--motion) var(--ease),
+      transform var(--motion) var(--ease),
+      border-color var(--motion) var(--ease);
+  }
+
+  .a-lift:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+  }
+
+  .a-press {
+    transition:
+      transform 90ms var(--ease),
+      background-color var(--motion) var(--ease),
+      box-shadow var(--motion) var(--ease);
+  }
+
+  .a-press:active:not(:disabled) {
+    transform: translateY(1px) scale(0.985);
+  }
+
+  .a-skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--surface-sunken) 0%,
+      var(--blue-50) 45%,
+      var(--surface-sunken) 90%
+    );
+    background-size: 220% 100%;
+    animation: farebi-shimmer 1.5s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-rise,
+  .a-pop,
+  .a-slide-in,
+  .a-fade,
+  .a-halo,
+  .a-scan,
+  .a-draw,
+  .a-skeleton {
+    animation: none !important;
+  }
+
+  .a-lift:hover {
+    transform: none;
+  }
+}

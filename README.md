@@ -75,6 +75,26 @@ This synthesises a test image, pushes it through the full pipeline, and asserts
 that a well-formed result object comes out. It then runs the hostile-upload
 rejection matrix and prints a PASS/FAIL table.
 
+## Reviewer frontend
+
+The reviewer console lives in [`frontend/`](./frontend) — React + TypeScript +
+Vite, talking to the API over HTTP only. It implements
+[`frebi.md`](./frebi.md) in full: verdict, calibrated probability, confidence,
+per-signal explanations *with their limitations*, the attribution heatmap and
+its mandatory caveat, quality warnings, artefact versions, and the persistent
+privacy notice.
+
+```bash
+make ui-install     # npm install
+make ui             # dev server on :5173
+make ui-check       # typecheck + contrast audit + render smoke test
+```
+
+`frontend/.env.example` ships with `VITE_MOCK_API=true`, so the whole UI —
+every verdict and every error state — is demoable before the API exists. See
+[`frontend/README.md`](./frontend/README.md) for the requirement-to-file map
+and [`frontend/DESIGN.md`](./frontend/DESIGN.md) for the palette rationale.
+
 ## Verify
 
 ```bash
