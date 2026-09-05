@@ -1,0 +1,197 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "farebi"
+version = "0.1.0"
+description = "KYC deepfake / manipulated-face risk-signal service"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Farebi" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security",
+]
+
+# ---- Runtime dependencies -------------------------------------------------
+# Kept deliberately small: heavy ML/serving stacks live in extras so that the
+# foundation phase installs in seconds and CI stays reliable.
+dependencies = [
+    "numpy>=1.26,<3",
+    "pillow>=10.3,<12",
+    "opencv-python-headless>=4.9,<5",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.3,<3",
+    "pyyaml>=6.0,<7",
+    "structlog>=24.1,<26",
+]
+
+[project.optional-dependencies]
+# Face landmarking. Optional so CI can run with --no-face-mesh.
+face = ["mediapipe>=0.10.14,<0.11"]
+
+# Model training and fusion.
+ml = [
+    "torch>=2.3",
+    "torchvision>=0.18",
+    "scikit-learn>=1.5",
+    "scipy>=1.13",
+    "pandas>=2.2",
+]
+
+# Serving stack (Phase 07/08).
+api = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "python-multipart>=0.0.9",
+    "prometheus-client>=0.20",
+]
+
+dev = [
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "import-linter>=2.1",
+    "hypothesis>=6.100",
+]
+
+all = ["farebi[face,ml,api,dev]"]
+
+[project.urls]
+Homepage = "https://example.invalid/farebi"
+
+[project.scripts]
+farebi-smoke = "scripts.smoke_test:main"
+
+# ---- hatchling ------------------------------------------------------------
+[tool.hatch.build.targets.wheel]
+packages = ["src/farebi"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/farebi", "configs", "README.md", "LICENSE"]
+
+# ---- ruff -----------------------------------------------------------------
+[tool.ruff]
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "C4",   # comprehensions
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",  # line length is handled by the formatter
+    # Enums deliberately inherit `str` so `.value` serialises straight into the
+    # API contract (non-negotiable #10: versions/verdicts/verdicts on every
+    # response). A bare `Enum` would force `.value` lookups everywhere.
+    "UP042",
+    # `UploadRejected` and `ModelAssetMissing` are domain vocabulary, not the
+    # generic *Error names ruff's N818 wants; the names are load-bearing.
+    "N818",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]  # test helper names may mirror fixture semantics
+
+[tool.ruff.lint.isort]
+known-first-party = ["farebi"]
+
+# ---- mypy -----------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+packages = ["farebi"]
+strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+disallow_any_generics = true
+no_implicit_optional = true
+show_error_codes = true
+pretty = true
+
+# Third-party libraries without stubs: do not fail the build on them.
+[[tool.mypy.overrides]]
+module = [
+    "cv2.*",
+    "mediapipe.*",
+    "sklearn.*",
+    "scipy.*",
+    "PIL.*",
+    "importlinter.*",
+    "torch.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "scripts.*"]
+disallow_untyped_defs = false
+
+# ---- pytest ---------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "security: upload / adversarial input rejection tests",
+    "robustness: transform robustness tests",
+    "slow: tests that require torch, mediapipe or a GPU",
+]
+filterwarnings = ["error"]
+
+# ---- import-linter --------------------------------------------------------
+# Mechanically enforces the layering rules in FAREBI.md §6.
+# The complementary AST-based check lives in tests/unit/test_layering.py and
+# additionally forbids signal -> signal imports.
+[tool.importlinter]
+root_package = "farebi"
+include_external_packages = false
+
+[[tool.importlinter.contracts]]
+name = "Layering (FAREBI.md §6): L0 core|utils -> L1 capture|degradation|data -> L2 signals -> L3 models|fusion -> L4 inference|explain -> L5 api|monitoring"
+type = "layers"
+layers = [
+    "farebi.api",
+    "farebi.monitoring",
+    "farebi.inference : farebi.explain",
+    "farebi.models : farebi.fusion",
+    "farebi.signals",
+    "farebi.capture : farebi.degradation : farebi.data",
+    "farebi.core : farebi.utils",
+]
+
+[[tool.importlinter.contracts]]
+name = "Offline-only packages (harness, evaluation) are never imported by serving code"
+type = "forbidden"
+source_modules = ["farebi.api", "farebi.monitoring"]
+forbidden_modules = ["farebi.harness", "farebi.evaluation"]
+
+# ---- coverage -------------------------------------------------------------
+[tool.coverage.run]
+branch = true
+source = ["src/farebi"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@abstractmethod",
+]

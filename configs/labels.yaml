@@ -1,0 +1,39 @@
+# Label and verdict taxonomy. Single source of truth for what a label means.
+# Consumed by farebi.core.constants at import time (values are asserted equal).
+
+verdicts:
+  likely_real:
+    description: Calibrated manipulation probability is below the low band.
+    action: auto_accept_as_signal
+  likely_fake:
+    description: Calibrated manipulation probability is above the high band.
+    action: route_to_manual_review
+  uncertain:
+    description: Inside the conformal band, out-of-distribution, or signals disagree.
+    action: route_to_manual_review
+  unable_to_assess:
+    description: Invalid, corrupt, no face, face too small, or unusable quality.
+    action: request_recapture
+
+binary_label:
+  0: real
+  1: fake_or_manipulated
+
+attack_types:
+  real:
+    - authentic
+    - authentic_benign_processed
+  fake_or_manipulated:
+    - fully_synthetic
+    - face_swap
+    - face_morph
+    - localized_edit
+    - identity_altering_retouch
+  ambiguous:
+    - unknown_edit
+    - heavy_beauty_filter
+
+capture_types:
+  - selfie
+  - id_photo
+  - unknown

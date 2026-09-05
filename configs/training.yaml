@@ -1,0 +1,61 @@
+# Training configuration. Consumed by Phase 03/04; the KYC degradation ranges
+# are used from Phase 02 onward by the signal harness.
+
+training:
+  seed: 1337
+  deterministic: true
+  device: auto                # auto | cpu | cuda | mps
+  batch_size: 32
+  epochs: 20
+  num_workers: 4
+  class_weighting: balanced
+
+  # Screen-replay attack synthesis for the evaluation set (PLANS/02).
+  # Not a training augmentation: this builds replay_positives, the set that
+  # makes PRNU interpretable (a real screen capture must look replayed).
+  replay:
+    enabled: true
+    display_resolution: [1920, 1080]
+    moire_pitch_px: [2.0, 6.0]
+    moire_amplitude: [2.0, 8.0]
+    gamut_gain: [1.04, 0.99, 1.02]      # per-channel panel response (RGB)
+    sheen_probability: 0.5
+    sheen_strength: [10, 60]
+    depth_flatten_sigma: [0.4, 1.2]
+
+  optimizer:
+    name: adamw
+    lr: 0.0003
+    weight_decay: 0.01
+
+  scheduler:
+    name: cosine
+    warmup_epochs: 1
+
+  augmentation:
+    # KYCDegradation is applied to BOTH classes, always (non-negotiable #5).
+    # Ranges are guesses until real production uploads exist; recalibrate in
+    # Phase 03. See PLANS/02-signal-factory.md for the pipeline order.
+    kyc_degradation:
+      enabled: true
+
+      # 1. The long-edge sizes a KYC app actually ships. Sampled uniformly.
+      resize_long_edge: [720, 960, 1080, 1280]
+
+      # 2. Camera-app encode.
+      jpeg_quality: [80, 95]
+
+      # 3. Exposure / auto-white-balance jitter: out = in * alpha + beta.
+      awb_alpha: [0.9, 1.1]
+      awb_beta: [-10, 10]
+
+      # 4. Hand shake / focus hunt. Applied with this probability.
+      blur_sigma: [0.3, 1.0]
+      blur_probability: 0.3
+
+      # 5. Upload-SDK re-encode. The one that kills fragile signals.
+      recompress_quality: [70, 90]
+
+    geometric:
+      horizontal_flip: true
+      rotation_deg: 5

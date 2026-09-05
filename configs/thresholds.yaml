@@ -1,0 +1,26 @@
+# Decision thresholds.
+#
+# NON-NEGOTIABLE #3: these values are placeholders. They must be replaced by
+# scripts/tune_thresholds.py, which writes artifacts/thresholds.json from a
+# held-out calibration split. The API reads artifacts/, never this file.
+#
+# version is echoed in every API response as `threshold_version`.
+
+version: "uncalibrated-0.0.0"
+target_error: 0.05            # conformal target error on each side of the band
+
+conformal:
+  q_lo: null                  # largest t with P(fake | p < t) <= target_error
+  q_hi: null                  # smallest t with P(real | p > t) <= target_error
+  calibration_split: data/splits/calibration.csv
+
+uncertainty:
+  ood_cutoff: null
+  disagreement_cutoff: null
+  max_uncertainty_score: 1.0
+
+confidence_levels:
+  # Maps uncertainty_score -> confidence_level reported to the user.
+  high:   0.15
+  medium: 0.35
+  low:    1.0

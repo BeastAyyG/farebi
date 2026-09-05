@@ -1,0 +1,48 @@
+# Application-wide settings. Mirrored by farebi.core.config.Settings.
+# All values here can be overridden with FAREBI_<SECTION>__<KEY> env vars.
+
+app:
+  name: farebi
+  env: development
+  log_level: INFO
+  log_format: json            # json | console
+  request_id_header: X-Request-ID
+  retention:
+    # Non-negotiable #7: uploads are not retained. True only for an explicit,
+    # consented debugging session, and never in production.
+    keep_uploads: false
+    temp_dir: null            # null => platform default temp dir
+
+upload:
+  max_bytes: 10485760         # 10 MiB
+  max_pixels: 40000000        # decompression-bomb guard
+  max_edge_px: 4096
+  allowed_media_types:
+    - image/jpeg
+    - image/png
+  # Reject animated / multi-frame containers even when renamed to .jpg/.png.
+  allow_multiframe: false
+
+capture:
+  face_mesh:
+    enabled: true             # false => degraded mode, pipeline still runs
+    # auto => use mp.solutions.face_mesh if the installed MediaPipe has it,
+    # otherwise the tasks API (which needs model_path). Recent MediaPipe
+    # releases removed the legacy solutions API entirely.
+    backend: auto             # auto | solutions | tasks
+    model_path: artifacts/models/face_landmarker.task
+    max_num_faces: 3
+    min_detection_confidence: 0.5
+    refine_landmarks: true    # required: adds the 10 iris points (468-477)
+  quality:
+    # Quality gates are config, not code (non-negotiable #3).
+    min_face_px: 96           # min(width, height) of the face bbox
+    min_interocular_px: 40    # distance between eye centres
+    min_eye_width_px: 40      # scleral.py needs >= 80; corneal.py needs >= 40
+    min_blur_score: 45.0      # Laplacian variance, 0-255 luma
+    min_exposure: 0.15        # mean luma, 0-1
+    max_exposure: 0.85
+    max_clipped_fraction: 0.20
+
+artifacts:
+  dir: artifacts

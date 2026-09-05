@@ -1,0 +1,110 @@
+{
+  "config_hash": "35b947bede851506a7adb1fe161cda3a4c108f96bfa6a6a9bbec085dd78f2e0c",
+  "created_at": "2026-09-04T22:47:44+00:00",
+  "dataset_version": "self-test",
+  "evaluations": [
+    {
+      "auc_std": 0.0,
+      "best_feature": "constant",
+      "coverage": 1.0,
+      "cross_source_auc": 0.5,
+      "dataset_version": "self-test",
+      "degraded": true,
+      "n_applicable": 60,
+      "n_folds_used": 3,
+      "n_samples": 60,
+      "n_splits": 3,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "constant": 0.5
+      },
+      "per_feature_direction": {
+        "constant": 1
+      },
+      "signal": "stub_noise",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.0,
+      "best_feature": "mean_luma",
+      "coverage": 1.0,
+      "cross_source_auc": 1.0,
+      "dataset_version": "self-test",
+      "degraded": true,
+      "n_applicable": 60,
+      "n_folds_used": 3,
+      "n_samples": 60,
+      "n_splits": 3,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "mean_luma": 1.0
+      },
+      "per_feature_direction": {
+        "mean_luma": 1
+      },
+      "signal": "stub_encoded",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.0,
+      "best_feature": "eligible_luma",
+      "coverage": 0.283333,
+      "cross_source_auc": 1.0,
+      "dataset_version": "self-test",
+      "degraded": true,
+      "n_applicable": 17,
+      "n_folds_used": 3,
+      "n_samples": 60,
+      "n_splits": 3,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "eligible_luma": 1.0
+      },
+      "per_feature_direction": {
+        "eligible_luma": 1
+      },
+      "signal": "stub_partial",
+      "skipped_folds": 0
+    }
+  ],
+  "git_sha": null,
+  "notes": [
+    "evaluated 3 signal(s) in self-test mode"
+  ],
+  "registry_version": "harness-self-test",
+  "verdicts": [
+    {
+      "best_feature": "constant",
+      "coverage": 1.0,
+      "cross_source_auc": 0.5,
+      "evaluated_at": "2026-09-04T22:47:39+00:00",
+      "reason": "AUC 0.500 < 0.60 after degradation",
+      "signal": "stub_noise",
+      "status": "kill"
+    },
+    {
+      "best_feature": "mean_luma",
+      "coverage": 1.0,
+      "cross_source_auc": 1.0,
+      "evaluated_at": "2026-09-04T22:47:41+00:00",
+      "reason": "AUC 1.000 >= 0.65 and coverage 100% >= 50%",
+      "signal": "stub_encoded",
+      "status": "keep"
+    },
+    {
+      "best_feature": "eligible_luma",
+      "coverage": 0.283333,
+      "cross_source_auc": 1.0,
+      "evaluated_at": "2026-09-04T22:47:44+00:00",
+      "reason": "AUC 1.000 >= 0.60 but coverage 28% < 50%; usable only when applicable, quality-gated",
+      "signal": "stub_partial",
+      "status": "bench"
+    }
+  ]
+}

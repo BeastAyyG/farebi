@@ -1,0 +1,70 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# --- Tooling caches -------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Environment ----------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Data: never commit subject imagery -----------------------------------
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/self_capture/*
+!data/self_capture/.gitkeep
+
+# --- Artefacts: models and reports are reproducible, not source -----------
+artifacts/models/*
+!artifacts/models/.gitkeep
+artifacts/reports/*
+!artifacts/reports/.gitkeep
+artifacts/*.pkl
+artifacts/*.pt
+
+# --- Node -----------------------------------------------------------------
+node_modules/
+frontend/dist/
+
+# --- Vendored reference repos: keep confined to vendor/ --------------------
+# Cloned research code (DeepfakeBench, UnivFD, prnu-python, etc.) lives ONLY
+# here. It is reference/vendor material and must NEVER be imported from src/
+# (it would violate the FAREBI.md layering rules). Not committed by default.
+# Only vendor/README.md and vendor/clone_all.sh are versioned.
+vendor/*
+!vendor/README.md
+!vendor/clone_all.sh
+
+# --- OS -------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Editors --------------------------------------------------------------
+.idea/
+.vscode/
+
+# --- Tooling configs ------------------------------------------------------
+.opencode/
+.workbuddy-ai/
+
+# --- Working notes --------------------------------------------------------
+farebi plan.txt
+farebi2.txt

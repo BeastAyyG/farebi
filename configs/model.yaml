@@ -1,0 +1,25 @@
+# Model configuration. Populated for real in Phase 04 (Tier-1 signals).
+# Kept valid-but-empty here so the config layer is exercised from day one.
+
+model:
+  name: farebi-baseline
+  version: "0.0.0-untrained"
+  architecture: null          # e.g. clip-vit-l-14 + linear_probe
+  input_size: [224, 224]
+  num_classes: 2
+
+backbone:
+  name: null                  # e.g. ViT-L-14
+  pretrained: null            # e.g. openai
+  frozen: true                # frozen features generalise better across generators
+  embedding_dim: null
+
+head:
+  type: linear                # linear | mlp
+  hidden_dims: []
+  dropout: 0.0
+
+ensemble:
+  enabled: false
+  members: 1                  # MC-dropout passes or seed ensemble members
+  mc_dropout_passes: 0
