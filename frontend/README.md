@@ -19,6 +19,13 @@ cp .env.example .env.local     # ships with VITE_MOCK_API=true
 npm run dev                    # http://localhost:5173
 ```
 
+Or from the repo root, `make ui-setup && make ui`.
+
+> **If the app suddenly won't start**, `node_modules/` and `.env.local` are both
+> untracked and are not preserved by sandbox/workspace snapshots. Everything
+> under `src/` is committed and safe. Restore with `make ui-setup` (or
+> `npm ci && cp .env.example .env.local`) and start it again.
+
 With mock mode on you get a scenario picker in the header and the whole UI is
 demoable with no backend running.
 

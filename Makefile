@@ -6,7 +6,7 @@ UV          ?= uv
 PYTEST_ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help install install-minimal lock lint format type test test-all layers smoke check clean serve ui ui-install ui-check docker-up docker-down
+.PHONY: help install install-minimal lock lint format type test test-all layers smoke check clean serve ui ui-install ui-setup ui-check docker-up docker-down
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -51,6 +51,11 @@ serve: ## Start the API (Phase 08; not wired yet)
 
 ui-install: ## Install frontend dependencies
 	cd frontend && npm install
+
+ui-setup: ## Restore a clean frontend checkout: install deps + seed .env.local
+	cd frontend && npm ci
+	cd frontend && test -f .env.local || cp .env.example .env.local
+	@echo "Frontend restored. Run 'make ui' to start it."
 
 ui: ## Start the reviewer frontend (mock mode works with no API running)
 	cd frontend && npm run dev
