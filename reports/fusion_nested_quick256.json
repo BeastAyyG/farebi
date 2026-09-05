@@ -1,0 +1,70 @@
+{
+  "dataset": "data\\interim\\quick_features.csv",
+  "n_samples": 318,
+  "n_features": 18,
+  "features": [
+    "fft__fft_high_freq_ratio",
+    "fft__fft_spectral_peak",
+    "fft__fft_blockiness",
+    "texture__texture_face_sharpness",
+    "texture__texture_bg_sharpness",
+    "texture__texture_sharpness_logratio",
+    "texture__texture_residual_logratio",
+    "prnu__prnu_face_energy",
+    "prnu__prnu_bg_energy",
+    "prnu__prnu_face_bg_logratio",
+    "prnu__prnu_face_mean_abs",
+    "replay_detect__replay_moire_peak",
+    "replay_detect__replay_midband_ratio",
+    "chromatic_aberration__ca_rg_slope",
+    "chromatic_aberration__ca_bg_slope",
+    "chromatic_aberration__ca_slope_avg",
+    "chromatic_aberration__ca_mean",
+    "chromatic_aberration__ca_edge_patches"
+  ],
+  "mean_auc_raw": 0.9053182983423593,
+  "mean_auc_cal": 0.8893980233602876,
+  "mean_uncertain_rate": 0.1736063663036052,
+  "mean_error_given_certain": 0.10804493017607772,
+  "notes": [
+    "isotonic + band fit on held-out 1/3 calibration slice of train fold.",
+    "inner fit/cal split is random stratified, not by group (train fold holds one real + one fake group); leakage touches only the 1-D map.",
+    "same rows, outer folds and seed as fusion_probe_quick256.json: AUC deltas isolate calibration discipline."
+  ],
+  "folds": [
+    {
+      "held_out": [
+        "celeba-hq",
+        "flux"
+      ],
+      "n_fit": 92,
+      "n_cal": 47,
+      "n_test": 179,
+      "auc_raw": 0.8892529488859765,
+      "auc_cal": 0.8857142857142857,
+      "brier_raw": 0.1259928045501019,
+      "brier_cal": 0.19522692868454458,
+      "q_lo": 0.12631578947368421,
+      "q_hi": 0.2,
+      "uncertain_rate": 0.3184357541899442,
+      "error_given_certain": 0.09016393442622951
+    },
+    {
+      "held_out": [
+        "ffhq",
+        "sdxl"
+      ],
+      "n_fit": 119,
+      "n_cal": 60,
+      "n_test": 139,
+      "auc_raw": 0.9213836477987422,
+      "auc_cal": 0.8930817610062894,
+      "brier_raw": 0.09340034151565674,
+      "brier_cal": 0.1119664189474462,
+      "q_lo": 0.3333333333333333,
+      "q_hi": 0.3333333333333333,
+      "uncertain_rate": 0.02877697841726623,
+      "error_given_certain": 0.1259259259259259
+    }
+  ]
+}
