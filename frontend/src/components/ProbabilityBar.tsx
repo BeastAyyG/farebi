@@ -1,6 +1,7 @@
 import type { ConfidenceLevel, Verdict } from '../types/detection';
 import { assertNoBannedPhrase, formatProbability, probabilitySentence } from '../lib/copy';
 import { VERDICT_STYLE, clamp01 } from '../lib/verdict';
+import { useGrow } from '../lib/motion';
 import { ConfidenceBadge } from './ConfidenceBadge';
 
 export interface ProbabilityBarProps {
@@ -20,6 +21,7 @@ export interface ProbabilityBarProps {
  */
 export function ProbabilityBar({ value, confidence, verdict }: ProbabilityBarProps) {
   const p = clamp01(value);
+  const grown = useGrow(p);
   const sentence = probabilitySentence(p, confidence);
   const style = VERDICT_STYLE[verdict];
 
@@ -40,8 +42,8 @@ export function ProbabilityBar({ value, confidence, verdict }: ProbabilityBarPro
         className="mt-3 h-3 w-full overflow-hidden rounded-full border border-line bg-sunken"
       >
         <div
-          className={`anim h-full rounded-full transition-[width] ${style.stripe}`}
-          style={{ width: `${p * 100}%` }}
+          className={`a-bar h-full rounded-full ${style.stripe}`}
+          style={{ width: `${grown * 100}%` }}
         />
       </div>
 

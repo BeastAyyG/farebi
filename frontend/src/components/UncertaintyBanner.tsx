@@ -1,5 +1,6 @@
 import { formatProbability, UNCERTAINTY_INTERPRETATION } from '../lib/copy';
 import { clamp01, uncertaintyBucket } from '../lib/verdict';
+import { useGrow } from '../lib/motion';
 
 export interface UncertaintyBannerProps {
   uncertainty_score: number;
@@ -14,6 +15,7 @@ export interface UncertaintyBannerProps {
 export function UncertaintyBanner({ uncertainty_score, in_band }: UncertaintyBannerProps) {
   const score = clamp01(uncertainty_score);
   const bucket = uncertaintyBucket(score);
+  const grown = useGrow(score);
 
   return (
     <aside
@@ -45,8 +47,8 @@ export function UncertaintyBanner({ uncertainty_score, in_band }: UncertaintyBan
         className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-ochre-100"
       >
         <div
-          className="anim h-full rounded-full bg-ochre-500 transition-[width]"
-          style={{ width: `${score * 100}%` }}
+          className="a-bar h-full rounded-full bg-ochre-500"
+          style={{ width: `${grown * 100}%` }}
         />
       </div>
 

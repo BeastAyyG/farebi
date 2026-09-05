@@ -3,9 +3,12 @@ import type { SignalOutput } from '../types/detection';
 import { formatProbability } from '../lib/copy';
 import { DIRECTION_STYLE, clamp01 } from '../lib/verdict';
 import { reasonCodeDoc, signalDocsUrl } from '../lib/signalDocs';
+import { STAGGER_MS, useGrow } from '../lib/motion';
 
 interface SignalRowProps {
   signal: SignalOutput;
+  /** Position in the list, used to stagger the entrance. */
+  index?: number;
 }
 
 /**
@@ -13,15 +16,19 @@ interface SignalRowProps {
  * the mandatory limitation. Clicking the code opens the Reason Code Explorer
  * inline (§11) rather than navigating away mid-review.
  */
-export function SignalRow({ signal }: SignalRowProps) {
+export function SignalRow({ signal, index = 0 }: SignalRowProps) {
   const [expanded, setExpanded] = useState(false);
   const direction = DIRECTION_STYLE[signal.direction] ?? DIRECTION_STYLE.neutral;
   const strength = clamp01(signal.strength);
+  const grown = useGrow(strength);
   const doc = reasonCodeDoc(signal.code);
   const panelId = `signal-${signal.code}-detail`;
 
   return (
-    <li className="rounded-[10px] border border-line bg-surface p-3">
+    <li
+      className="a-slide-in a-lift rounded-[10px] border border-line bg-surface p-3"
+      style={{ ['--delay' as string]: `${index * STAGGER_MS}ms` }}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <button
           type="button"
@@ -52,8 +59,8 @@ export function SignalRow({ signal }: SignalRowProps) {
           className="h-2 flex-1 overflow-hidden rounded-full bg-sunken"
         >
           <div
-            className={`anim h-full rounded-full transition-[width] ${direction.fill}`}
-            style={{ width: `${strength * 100}%` }}
+            className={`a-bar h-full rounded-full ${direction.fill}`}
+            style={{ width: `${grown * 100}%` }}
           />
         </div>
         <span className="w-10 shrink-0 text-right font-mono text-micro text-ink-2">
@@ -69,7 +76,7 @@ export function SignalRow({ signal }: SignalRowProps) {
       {expanded ? (
         <div
           id={panelId}
-          className="mt-3 rounded-[8px] border border-line bg-sunken p-3"
+          className="a-rise mt-3 rounded-[8px] border border-line bg-sunken p-3"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-[14px] font-semibold text-ink">{doc.title}</h3>

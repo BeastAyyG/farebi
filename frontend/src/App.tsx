@@ -14,6 +14,8 @@ import { VersionInfo } from './components/VersionInfo';
 import { PrivacyNotice } from './components/PrivacyNotice';
 import { EmptyState } from './components/EmptyState';
 import { ErrorState } from './components/ErrorState';
+import { Reveal } from './components/ui/Reveal';
+import { ResultSkeleton } from './components/ui/Skeleton';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
@@ -168,53 +170,80 @@ export default function App() {
             />
 
             {previewUrl ? (
-              <ImagePreview
-                previewUrl={previewUrl}
-                meta={meta}
-                filename={file?.name ?? 'capture'}
-                onClear={onClear}
-                disabled={busy}
-              />
+              <Reveal kind="pop">
+                <ImagePreview
+                  previewUrl={previewUrl}
+                  meta={meta}
+                  filename={file?.name ?? 'capture'}
+                  onClear={onClear}
+                  disabled={busy}
+                />
+              </Reveal>
             ) : null}
 
             {result ? (
-              <QualityWarnings quality={result.quality} verdict={result.verdict} />
+              <Reveal index={1}>
+                <QualityWarnings quality={result.quality} verdict={result.verdict} />
+              </Reveal>
             ) : null}
           </div>
 
           {/* Right column: verdict → signals → heatmap → versions. */}
           <div id="result-column" className="flex flex-col gap-5">
             {status === 'error' && error ? (
-              <ErrorState error={error} onRetry={file ? onRetry : undefined} headingRef={errorHeadingRef} />
+              <Reveal kind="pop">
+                <ErrorState
+                  error={error}
+                  onRetry={file ? onRetry : undefined}
+                  headingRef={errorHeadingRef}
+                />
+              </Reveal>
             ) : null}
 
-            {status === 'idle' || status === 'loading' ? <EmptyState loading={busy} /> : null}
+            {status === 'idle' ? <EmptyState /> : null}
+
+            {status === 'loading' ? (
+              <>
+                <EmptyState loading />
+                <ResultSkeleton />
+              </>
+            ) : null}
 
             {status === 'done' && result ? (
-              <>
-                <ResultCard
-                  verdict={result.verdict}
-                  probability={result.fake_probability}
-                  confidence={result.confidence_level}
-                  signals={result.signals}
-                  result={result}
-                  headingRef={verdictHeadingRef}
-                />
-                <SignalList signals={result.signals} />
-                <HeatmapViewer
-                  image={previewUrl}
-                  map={result.heatmap_base64}
-                  regionScores={result.region_scores}
-                  requestId={result.request_id}
-                  modelVersion={result.model_version}
-                />
-                <VersionInfo
-                  model={result.model_version}
-                  threshold={result.threshold_version}
-                  calibration={result.calibration_version}
-                  info={result.model_info}
-                />
-              </>
+              /* Keyed on request_id so a fresh result replays the cascade
+                 instead of silently swapping numbers in place. */
+              <div key={result.request_id} className="flex flex-col gap-5">
+                <Reveal index={0}>
+                  <ResultCard
+                    verdict={result.verdict}
+                    probability={result.fake_probability}
+                    confidence={result.confidence_level}
+                    signals={result.signals}
+                    result={result}
+                    headingRef={verdictHeadingRef}
+                  />
+                </Reveal>
+                <Reveal index={2}>
+                  <SignalList signals={result.signals} />
+                </Reveal>
+                <Reveal index={3}>
+                  <HeatmapViewer
+                    image={previewUrl}
+                    map={result.heatmap_base64}
+                    regionScores={result.region_scores}
+                    requestId={result.request_id}
+                    modelVersion={result.model_version}
+                  />
+                </Reveal>
+                <Reveal index={4}>
+                  <VersionInfo
+                    model={result.model_version}
+                    threshold={result.threshold_version}
+                    calibration={result.calibration_version}
+                    info={result.model_info}
+                  />
+                </Reveal>
+              </div>
             ) : null}
           </div>
         </div>
@@ -235,7 +264,7 @@ function Header({
   busy: boolean;
 }) {
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="sticky top-0 z-40 border-b border-line bg-surface-translucent backdrop-blur-md">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
         <div className="flex items-center gap-3">
           <span

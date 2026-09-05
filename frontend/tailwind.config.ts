@@ -12,6 +12,7 @@ const config: Config = {
       colors: {
         bg: 'var(--bg)',
         surface: 'var(--surface)',
+        'surface-translucent': 'var(--surface-translucent)',
         sunken: 'var(--surface-sunken)',
         line: 'var(--border)',
         'line-strong': 'var(--border-strong)',

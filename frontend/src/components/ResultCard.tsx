@@ -56,11 +56,16 @@ export function ResultCard({
               tabIndex={-1}
               className={`flex items-center gap-2.5 text-[20px] font-semibold ${style.ink}`}
             >
-              <span
-                aria-hidden="true"
-                className={`inline-flex h-7 w-7 items-center justify-center rounded-full border ${style.border} bg-surface font-mono text-[15px]`}
-              >
-                {style.glyph}
+              <span aria-hidden="true" className="relative inline-flex h-7 w-7 shrink-0">
+                {/* One-shot halo: the result has arrived. */}
+                <span
+                  className={`a-halo absolute inset-0 rounded-full ${style.stripe}`}
+                />
+                <span
+                  className={`a-pop relative inline-flex h-7 w-7 items-center justify-center rounded-full border ${style.border} bg-surface font-mono text-[15px]`}
+                >
+                  {style.glyph}
+                </span>
               </span>
               {style.label}
             </h2>

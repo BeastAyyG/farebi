@@ -12,9 +12,21 @@ export function EmptyState({ loading = false }: EmptyStateProps) {
   return (
     <section
       aria-labelledby="empty-heading"
-      className="card flex min-h-[340px] flex-col items-center justify-center gap-4 p-8 text-center"
+      className="a-rise card flex min-h-[340px] flex-col items-center justify-center gap-4 p-8 text-center"
     >
-      <EmptyIllustration />
+      <div className="relative overflow-hidden rounded-[10px]">
+        <EmptyIllustration />
+        {/* A slow forensic "scan" pass — the one looping animation in the UI,
+            and only while there is nothing else to look at. */}
+        <div
+          aria-hidden="true"
+          className="a-scan pointer-events-none absolute inset-x-3 top-0 h-8 rounded-full"
+          style={{
+            background:
+              'linear-gradient(180deg, transparent, rgba(51,104,160,0.16), transparent)',
+          }}
+        />
+      </div>
 
       {loading ? (
         <>

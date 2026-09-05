@@ -140,18 +140,61 @@ on screen — because its exact position is the point of the component.
 
 ---
 
-## 5. Typography and motion
+## 5. Typography
 
-- Inter for UI, JetBrains Mono for anything quotable. 15px base, 1.55 line
-  height, 13px notes, 12px micro.
-- Motion is one token: `--motion: 170ms` with an ease-out curve, applied to
-  colour and width transitions only. Nothing slides, nothing bounces.
-- `prefers-reduced-motion` sets `--motion: 0ms` and a global override kills
-  every remaining transition and animation.
+Inter for UI, JetBrains Mono for anything quotable. 15px base, 1.55 line
+height, 13px notes, 12px micro. Because the ink ramp is compressed by the
+contrast floor (§2), size and weight do most of the hierarchy work.
+
+## 6. Motion
+
+The first pass of this UI had almost no motion and read as inert — a wall of
+static cards gives no sense of what just happened or what matters. The fix was
+not decoration but *timing*: three tokens and two curves, spent where they buy
+comprehension.
+
+| Token | Value | Spent on |
+| --- | --- | --- |
+| `--motion` | 170ms | Hover, colour, press feedback |
+| `--motion-slow` | 420ms | Entrances — cards, chips, rows |
+| `--motion-bar` | 900ms | Bar fills and the band marker |
+
+`--ease` is a standard ease-out. `--ease-spring` has a slight overshoot and is
+reserved for things that *arrive*: the verdict glyph, the active band-zone
+chip, the confidence badge.
+
+What moves, and why:
+
+- **Result cascade.** The right column staggers in at 55ms per card, keyed on
+  `request_id` so a new result replays the sequence instead of silently
+  swapping numbers in place under the reviewer's eyes.
+- **Bars travel from zero** over 900ms. Magnitude is easier to judge from
+  motion than from a static length, and it makes a 0.87 feel different from a
+  0.11 in a way a bare bar does not.
+- **The band marker slides** with a spring, so you watch it settle into the
+  green, amber or red zone. That landing is the whole point of the component.
+- **A one-shot halo** expands behind the verdict glyph when a result lands —
+  the single moment in the flow that deserves emphasis.
+- **Skeleton, not spinner.** Loading shows the shape of the answer, so the
+  layout does not jump when it arrives.
+- **Cards lift 1px on hover.** Enough to feel responsive; deliberately not
+  enough to imply one card outranks another.
+
+Three constraints kept it honest:
+
+1. **Nothing loops** except real progress: the spinner, the skeleton shimmer,
+   and the empty-state scan line — which only exists while there is nothing
+   else on screen.
+2. **No number animates.** `useGrow` is applied only to widths and positions.
+   A probability ticking up from 0.00 to 0.64 invites a misread, and this is a
+   tool whose entire thesis is that the number must be read correctly.
+3. **`prefers-reduced-motion` kills all of it** — the tokens go to 0ms *and* a
+   blanket rule disables every keyframe animation and hover transform. Not
+   softened; off.
 
 ---
 
-## 6. Things the palette deliberately does not do
+## 7. Things the palette deliberately does not do
 
 - **No dark mode.** Two colour schemes means two contrast audits and two sets
   of verdict fills. A forensic judgement should not shift with an OS toggle,

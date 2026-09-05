@@ -20,7 +20,8 @@ export function ConfidenceBadge({ confidence, className = '' }: ConfidenceBadgeP
   const style = STYLE[confidence];
   return (
     <p
-      className={`inline-flex items-start gap-2 rounded-[8px] border px-2.5 py-1.5 text-note ${style.chip} ${style.ink} ${className}`}
+      className={`a-pop inline-flex items-start gap-2 rounded-[8px] border px-2.5 py-1.5 text-note ${style.chip} ${style.ink} ${className}`}
+      style={{ ['--delay' as string]: '260ms' }}
     >
       <span aria-hidden="true" className="font-mono leading-5">
         {style.glyph}

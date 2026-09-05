@@ -1,6 +1,7 @@
 import type { DecisionBand } from '../types/detection';
 import { formatProbability } from '../lib/copy';
 import { VERDICT_STYLE, clamp01, verdictFromBand } from '../lib/verdict';
+import { useGrow } from '../lib/motion';
 
 export interface BandIndicatorProps {
   /** Calibrated probability being placed on the scale. */
@@ -30,6 +31,9 @@ export function BandIndicator({
   const lo = clamp01(band.q_lo);
   const hi = clamp01(band.q_hi);
   const zoneVerdict = verdictFromBand(p, band);
+  // The marker travels from 0 to its true position so the reviewer sees where
+  // it landed relative to the zones, not just where it is.
+  const markerP = useGrow(p);
   const style = VERDICT_STYLE[zoneVerdict];
 
   const pct = (v: number) => `${v * 100}%`;
@@ -74,14 +78,14 @@ export function BandIndicator({
         {/* p_fake marker. */}
         <div
           aria-hidden="true"
-          className="absolute top-0 h-full w-0.5"
-          style={{ left: pct(p), backgroundColor: 'var(--text)' }}
+          className="a-marker absolute top-0 h-full w-0.5"
+          style={{ left: pct(markerP), backgroundColor: 'var(--text)' }}
         />
         <div
           aria-hidden="true"
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-surface"
+          className="a-marker absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-surface shadow-[0_1px_3px_rgba(29,42,58,0.3)]"
           style={{
-            left: pct(p),
+            left: pct(markerP),
             width: 12,
             height: 12,
             backgroundColor: 'var(--text)',
@@ -140,8 +144,10 @@ function ZoneKey({
   return (
     <div
       className={[
-        'anim rounded-[6px] border px-2 py-1',
-        active ? 'border-line-strong bg-surface font-semibold text-ink' : 'border-transparent text-ink-3',
+        'anim rounded-[6px] border px-2 py-1 transition-all',
+        active
+          ? 'a-pop border-line-strong bg-surface font-semibold text-ink shadow-card'
+          : 'border-transparent text-ink-3',
       ].join(' ')}
     >
       <span className="flex items-center gap-1.5">

@@ -1,6 +1,7 @@
 import type { Quality, Verdict } from '../types/detection';
 import { QUALITY_SUMMARY } from '../lib/copy';
 import { deriveQualityWarnings, qualitySeverity, type QualitySeverity } from '../lib/quality';
+import { STAGGER_MS } from '../lib/motion';
 
 interface QualityWarningsProps {
   /** The `quality` dict straight from the response. */
@@ -49,7 +50,7 @@ export function QualityWarnings({ quality, verdict }: QualityWarningsProps) {
   return (
     <section aria-labelledby="quality-heading" className="card overflow-hidden">
       {/* Summary bar (§5.2). */}
-      <div className={`h-1.5 w-full ${style.bar}`} aria-hidden="true" />
+      <div className={`a-bar h-1.5 w-full ${style.bar}`} aria-hidden="true" />
 
       <div className="p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -57,7 +58,7 @@ export function QualityWarnings({ quality, verdict }: QualityWarningsProps) {
             Capture quality
           </h2>
           <span
-            className={`inline-flex items-center gap-1.5 rounded-[6px] border px-2 py-0.5 text-micro font-medium ${style.chipBg} ${style.chipInk}`}
+            className={`a-pop inline-flex items-center gap-1.5 rounded-[6px] border px-2 py-0.5 text-micro font-medium ${style.chipBg} ${style.chipInk}`}
           >
             <span aria-hidden="true" className="font-mono">
               {style.glyph}
@@ -72,12 +73,13 @@ export function QualityWarnings({ quality, verdict }: QualityWarningsProps) {
           </p>
         ) : (
           <ul className="mt-3 space-y-2">
-            {warnings.map((warning) => {
+            {warnings.map((warning, i) => {
               const rowStyle = SEVERITY_STYLE[warning.severity];
               return (
                 <li
                   key={warning.id}
-                  className={`flex items-start gap-2 rounded-[8px] border px-2.5 py-2 ${rowStyle.chipBg}`}
+                  className={`a-slide-in flex items-start gap-2 rounded-[8px] border px-2.5 py-2 ${rowStyle.chipBg}`}
+                  style={{ ['--delay' as string]: `${i * STAGGER_MS}ms` }}
                 >
                   <span aria-hidden="true" className={`mt-px ${rowStyle.chipInk}`}>
                     ⚠

@@ -2,6 +2,7 @@ import type { SignalOutput } from '../types/detection';
 import { isApplicable } from '../lib/verdict';
 import { SignalRow } from './SignalRow';
 import { InapplicableSignalRow } from './InapplicableSignalRow';
+import { SignalRadar } from './SignalRadar';
 
 export interface SignalListProps {
   signals: SignalOutput[];
@@ -40,10 +41,19 @@ export function SignalList({ signals }: SignalListProps) {
         <p className="mt-3 text-note text-ink-2">No signals were reported for this capture.</p>
       ) : null}
 
+      {/* §11 Signal Radar — the balance of evidence at a glance, above the
+          detail rows that back it up. Renders only when there are enough
+          axes for a polygon to mean anything. */}
+      {applicable.length >= 3 ? (
+        <div className="mt-4 rounded-[10px] border border-line bg-sunken px-3 py-4">
+          <SignalRadar signals={applicable} />
+        </div>
+      ) : null}
+
       {applicable.length > 0 ? (
         <ul className="mt-3 space-y-2.5">
-          {applicable.map((signal) => (
-            <SignalRow key={signal.code} signal={signal} />
+          {applicable.map((signal, i) => (
+            <SignalRow key={signal.code} signal={signal} index={i} />
           ))}
         </ul>
       ) : null}
@@ -54,8 +64,8 @@ export function SignalList({ signals }: SignalListProps) {
             Skipped signals
           </h3>
           <ul className="mt-2 space-y-2.5">
-            {inapplicable.map((signal) => (
-              <InapplicableSignalRow key={signal.code} signal={signal} />
+            {inapplicable.map((signal, i) => (
+              <InapplicableSignalRow key={signal.code} signal={signal} index={i} />
             ))}
           </ul>
         </>

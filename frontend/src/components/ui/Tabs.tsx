@@ -103,7 +103,7 @@ export function Tabs<T extends string>({
                 'anim rounded-[7px] px-3 py-1.5 text-[13px] font-medium transition-colors',
                 selected
                   ? 'border border-line bg-surface text-ink shadow-card'
-                  : 'border border-transparent text-ink-2 hover:text-ink',
+                  : 'border border-transparent text-ink-2 hover:bg-surface-translucent hover:text-ink',
                 item.disabled ? 'cursor-not-allowed opacity-50 hover:text-ink-2' : '',
               ].join(' ')}
             >
@@ -120,10 +120,13 @@ export function Tabs<T extends string>({
 
       <div
         role="tabpanel"
+        /* Keying on `value` remounts the panel, so each view fades in rather
+           than snapping. */
+        key={value}
         id={`${baseId}-panel-${value}`}
         aria-labelledby={`${baseId}-tab-${value}`}
         tabIndex={0}
-        className="mt-3 rounded-[10px] focus-visible:outline-2"
+        className="a-fade mt-3 rounded-[10px] focus-visible:outline-2"
       >
         {children}
       </div>

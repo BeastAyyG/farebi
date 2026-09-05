@@ -112,6 +112,7 @@ frontend/
     ├── vite-env.d.ts
     ├── styles/
     │   ├── tokens.css              every colour in the product
+    │   ├── animations.css          keyframes + motion utilities
     │   └── index.css               Tailwind layers + base/component classes
     ├── types/detection.ts          DetectResponse, SignalOutput, Quality, Verdict
     ├── api/client.ts               typed fetch, AbortController, error mapping
@@ -121,6 +122,7 @@ frontend/
     │   ├── quality.ts              §5.1 thresholds -> warning list + severity
     │   ├── validateImage.ts        magic bytes, dimensions, APNG, preview
     │   ├── png.ts                  tEXt chunk writer for the heatmap download
+    │   ├── motion.ts               useGrow + reduced-motion detection
     │   └── signalDocs.ts           Reason Code Explorer content
     ├── mocks/
     │   ├── fixtures.ts
@@ -130,10 +132,10 @@ frontend/
         ├── ResultCard.tsx          ProbabilityBar.tsx    ConfidenceBadge.tsx
         ├── BandIndicator.tsx       UncertaintyBanner.tsx WhatIfSlider.tsx
         ├── SignalList.tsx          SignalRow.tsx         InapplicableSignalRow.tsx
-        ├── HeatmapViewer.tsx       VersionInfo.tsx       PrivacyNotice.tsx
-        ├── EmptyState.tsx          ErrorState.tsx
+        ├── SignalRadar.tsx         HeatmapViewer.tsx     VersionInfo.tsx
+        ├── PrivacyNotice.tsx       EmptyState.tsx        ErrorState.tsx
         └── ui/                     Tabs.tsx  Tooltip.tsx  Disclosure.tsx
-                                    Spinner.tsx  Icon.tsx
+                                    Spinner.tsx  Skeleton.tsx  Reveal.tsx  Icon.tsx
 ```
 
 ---
@@ -213,11 +215,34 @@ Error handling (§9.2), all in `src/api/client.ts`:
 | §9.3 empty / loading state | `components/EmptyState.tsx` |
 | §11 What-if Slider | `components/WhatIfSlider.tsx` (collapsed, labelled illustrative) |
 | §11 Reason Code Explorer | `components/SignalRow.tsx` + `lib/signalDocs.ts` |
+| §11 Signal Radar Chart | `components/SignalRadar.tsx`, rendered at the top of `SignalList` |
 
-The Signal Radar Chart and the Social Media Recompression Simulator from §11
-are **not** implemented. They were the two lowest-value ideas for a reviewer
-under time pressure, and the recompression simulator in particular would have
-needed a server round trip per variant to say anything truthful.
+The Social Media Recompression Simulator from §11 is **not** implemented: it
+would need a server round trip per variant to say anything truthful, and a
+client-side canvas approximation of Instagram's encoder would misrepresent
+robustness rather than demonstrate it.
+
+## Motion
+
+Motion is a thin layer in `src/styles/animations.css`, driven by three tokens
+(`--motion`, `--motion-slow`, `--motion-bar`) and two easing curves.
+
+Three rules govern it:
+
+1. **Motion carries meaning** — arrival (cards cascade in), magnitude (bars and
+   the band marker travel from zero so you see *where they landed*), or state
+   change (tab panels crossfade, expanded panels slide).
+2. **Nothing loops** except genuine progress indicators: the upload spinner,
+   the skeleton shimmer, and the scan line on the empty-state illustration,
+   which stops existing the moment there is anything else to look at.
+3. **Nothing animates a number a reviewer reads.** Bars grow; the figures
+   beside them are correct on the first painted frame. A probability counting
+   up from 0.00 to 0.64 is a misread waiting to happen, so `useGrow` in
+   `lib/motion.ts` is deliberately only ever applied to widths and positions.
+
+`prefers-reduced-motion: reduce` zeroes all three motion tokens *and* hard
+disables every keyframe animation and hover transform, in both
+`animations.css` and `index.css`.
 
 ---
 

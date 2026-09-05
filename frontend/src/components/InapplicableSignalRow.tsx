@@ -1,8 +1,11 @@
 import type { SignalOutput } from '../types/detection';
 import { SIGNAL_NOT_APPLICABLE } from '../lib/copy';
+import { STAGGER_MS } from '../lib/motion';
 
 interface InapplicableSignalRowProps {
   signal: SignalOutput;
+  /** Position in the list, used to stagger the entrance. */
+  index?: number;
 }
 
 /**
@@ -10,11 +13,14 @@ interface InapplicableSignalRowProps {
  * a reviewer needs to know which measurements are missing before weighing the
  * ones that survived.
  */
-export function InapplicableSignalRow({ signal }: InapplicableSignalRowProps) {
+export function InapplicableSignalRow({ signal, index = 0 }: InapplicableSignalRowProps) {
   const reason = signal.not_applicable_reason ?? qualityReason(signal);
 
   return (
-    <li className="rounded-[10px] border border-dashed border-line bg-sunken p-3 opacity-90">
+    <li
+      className="a-fade rounded-[10px] border border-dashed border-line bg-sunken p-3 opacity-90"
+      style={{ ['--delay' as string]: `${index * STAGGER_MS}ms` }}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="tag-mono text-ink-3">{signal.code}</span>
         <span className="text-micro font-medium uppercase tracking-wide text-ink-3">
