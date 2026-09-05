@@ -57,4 +57,18 @@ evidence.
   real sensor noise persists. Caveat: this is our own torch-free recipe,
   not the exact polimi pipeline — re-validate against their laundered
   set (and the prnu-copy-attack repo) before the Phase-04 gate closes.
-  High-res re-validation still open (no high-res fakes on hand).
+   High-res re-validation still open (no high-res fakes on hand).
+- 2026-09-05 copy-attack probe (`quick256-copyattack`, n=445, real vs
+  fakes carrying a transplanted donor fingerprint, alpha=0.08 calibrated so
+  attacked-fake median residual variance matches the real median within 9%):
+  PRNU **0.669** (was 0.907 clean) — the presence workhorse
+  `prnu_face_energy` collapses to 0.622 while `prnu_face_mean_abs` (0.669)
+  and the face/bg log-ratio (0.658) carry the residual. Collateral damage:
+  texture 0.875 -> 0.682, replay 0.862 -> 0.760, fft 0.730 -> 0.652;
+  CA unaffected (0.907 — different physical basis). Donor is a
+  cross-camera average over 120 ffhq images, i.e. a LOWER BOUND on attacker
+  power vs a true same-camera fingerprint. Conclusion: noise *presence* is
+  spoofable by transplant — the structural fix is device-enrolment
+  *matching* (store the fingerprint at first verification), which is future
+  work beyond Phase 04. Digital transplant is not screen replay, so
+  `replay_detect` is not the mitigation here.

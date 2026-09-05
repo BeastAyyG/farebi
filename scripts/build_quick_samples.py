@@ -129,10 +129,12 @@ def main() -> None:
     with FaceMeshDetector() as detector:
         for i, row in enumerate(rows):
             raw = (ROOT / row["path"]).read_bytes()
+            suffix = pathlib.Path(row["path"]).suffix.lower()
+            media_type = "image/png" if suffix == ".png" else "image/jpeg"
             try:
                 decoded = decode_image(
                     raw,
-                    declared_media_type="image/jpeg",
+                    declared_media_type=media_type,
                     filename=pathlib.Path(row["path"]).name,
                     limits=limits,
                 )
