@@ -1,0 +1,85 @@
+{
+  "dataset": "data\\interim\\quick_features_v2.csv",
+  "n_samples": 503,
+  "n_features": 18,
+  "mean_in_domain_uncertain": 0.2424209445036334,
+  "mean_in_domain_error_given_certain": 0.14514991181657846,
+  "mean_transported_uncertain": 0.2238825457827909,
+  "mean_transported_error_given_certain": 0.13795868769569264,
+  "notes": [
+    "same rows, outer folds and seed as the nested report: the transported column is the nested construction re-evaluated; only the calA/calB split is new, so in-domain vs transported deltas isolate domain shift.",
+    "band edges are per-class percentiles (5th fake / 95th real) of the calA calibrated scores; binary APS-style sets reduce to the same edges, so no alternative thresholding of one score can do better.",
+    "Mondrian (group-conditional) thresholds cannot cover an unseen held-out group, so the transported width is structural, not a bug."
+  ],
+  "folds": [
+    {
+      "held_out": [
+        "ffhq1024",
+        "flux-celeba"
+      ],
+      "n_fit": 212,
+      "n_cal_a": 53,
+      "n_cal_b": 53,
+      "n_test": 185,
+      "auc_raw": 0.9285714285714285,
+      "q_lo": 0.2833333333333333,
+      "q_hi": 0.3333333333333333,
+      "in_domain": {
+        "n_eval": 53,
+        "uncertain_rate": 0.07547169811320753,
+        "error_given_certain": 0.14285714285714285
+      },
+      "transported": {
+        "n_eval": 185,
+        "uncertain_rate": 0.1567567567567567,
+        "error_given_certain": 0.07051282051282051
+      }
+    },
+    {
+      "held_out": [
+        "celeba-hq",
+        "flux"
+      ],
+      "n_fit": 216,
+      "n_cal_a": 54,
+      "n_cal_b": 54,
+      "n_test": 179,
+      "auc_raw": 0.899737876802097,
+      "q_lo": 0.07142857142857142,
+      "q_hi": 0.07142857142857142,
+      "in_domain": {
+        "n_eval": 54,
+        "uncertain_rate": 0.537037037037037,
+        "error_given_certain": 0.2
+      },
+      "transported": {
+        "n_eval": 179,
+        "uncertain_rate": 0.43575418994413406,
+        "error_given_certain": 0.25742574257425743
+      }
+    },
+    {
+      "held_out": [
+        "ffhq",
+        "sdxl"
+      ],
+      "n_fit": 242,
+      "n_cal_a": 61,
+      "n_cal_b": 61,
+      "n_test": 139,
+      "auc_raw": 0.9316752429959978,
+      "q_lo": 0.275,
+      "q_hi": 0.5,
+      "in_domain": {
+        "n_eval": 61,
+        "uncertain_rate": 0.11475409836065575,
+        "error_given_certain": 0.09259259259259259
+      },
+      "transported": {
+        "n_eval": 139,
+        "uncertain_rate": 0.07913669064748197,
+        "error_given_certain": 0.0859375
+      }
+    }
+  ]
+}

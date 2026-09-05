@@ -1,0 +1,62 @@
+{
+  "dataset": "data\\interim\\quick_features.csv",
+  "n_samples": 318,
+  "n_features": 18,
+  "mean_in_domain_uncertain": 0.09999999999999998,
+  "mean_in_domain_error_given_certain": 0.08333333333333333,
+  "mean_transported_uncertain": 0.07553956834532372,
+  "mean_transported_error_given_certain": 0.1471688287094025,
+  "notes": [
+    "same rows, outer folds and seed as the nested report: the transported column is the nested construction re-evaluated; only the calA/calB split is new, so in-domain vs transported deltas isolate domain shift.",
+    "band edges are per-class percentiles (5th fake / 95th real) of the calA calibrated scores; binary APS-style sets reduce to the same edges, so no alternative thresholding of one score can do better.",
+    "Mondrian (group-conditional) thresholds cannot cover an unseen held-out group, so the transported width is structural, not a bug."
+  ],
+  "folds": [
+    {
+      "held_out": [
+        "celeba-hq",
+        "flux"
+      ],
+      "n_fit": 92,
+      "n_cal_a": 23,
+      "n_cal_b": 24,
+      "n_test": 179,
+      "auc_raw": 0.8892529488859765,
+      "q_lo": 0.41666666666666663,
+      "q_hi": 0.3958333333333327,
+      "in_domain": {
+        "n_eval": 24,
+        "uncertain_rate": 0.0,
+        "error_given_certain": 0.08333333333333333
+      },
+      "transported": {
+        "n_eval": 179,
+        "uncertain_rate": 0.0,
+        "error_given_certain": 0.2011173184357542
+      }
+    },
+    {
+      "held_out": [
+        "ffhq",
+        "sdxl"
+      ],
+      "n_fit": 119,
+      "n_cal_a": 30,
+      "n_cal_b": 30,
+      "n_test": 139,
+      "auc_raw": 0.9213836477987422,
+      "q_lo": 0.2222222222222222,
+      "q_hi": 0.2222222222222222,
+      "in_domain": {
+        "n_eval": 30,
+        "uncertain_rate": 0.19999999999999996,
+        "error_given_certain": 0.08333333333333333
+      },
+      "transported": {
+        "n_eval": 139,
+        "uncertain_rate": 0.15107913669064743,
+        "error_given_certain": 0.09322033898305085
+      }
+    }
+  ]
+}
