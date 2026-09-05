@@ -104,20 +104,20 @@ three verdicts. Full suite `pytest -m "not slow"` → 174 passed, 0 failed.)
 
 ## Phase 04 — Tier-1 signals · [`PLANS/04`](./PLANS/04-signals-tier1.md)
 
-- [ ] `signals/fft.py`
-- [ ] `signals/texture.py`
-- [ ] `signals/vit_clip.py` (frozen CLIP-ViT + linear probe)
-- [ ] `signals/prnu.py` (noise **presence**, Mihçak wavelet denoising)
-- [ ] `signals/replay_detect.py` (PRNU's mandatory companion)
-- [ ] `signals/corneal.py`
-- [ ] `signals/chromatic_aberration.py`
-- [ ] `signals/geometry.py`
+- [x] `signals/fft.py`
+- [x] `signals/texture.py`
+- [x] `signals/vit_clip.py` (stub — kills clean without torch; Phase-06 re-entry slot)
+- [x] `signals/prnu.py` (noise **presence**, numpy+cv2 re-implementation of Bondi/Mihçak stages)
+- [x] `signals/replay_detect.py` (PRNU's mandatory companion)
+- [x] `signals/corneal.py` — harness-KILLED, deleted (see RISK_REGISTER.md KILL-01)
+- [x] `signals/chromatic_aberration.py`
+- [x] `signals/geometry.py` — harness-KILLED, deleted (see RISK_REGISTER.md KILL-02)
 - [ ] `models/` — backbone, classifier, ensemble, losses, registry
 - [ ] `scripts/train.py`, `scripts/evaluate.py`
-- [ ] Harness report for each signal with `per_feature_auc`
+- [x] Harness report for each signal with `per_feature_auc`
 - [ ] Neural baseline AUC reported on `test_unseen_generator` (expect 0.75–0.85)
-- [ ] ≥2 of {PRNU, corneal, chromatic aberration} survive
-- [ ] Killed signals **deleted** from the tree, reason in `RISK_REGISTER.md`
+- [x] ≥2 of {PRNU, corneal, chromatic aberration} survive (PRNU + CA)
+- [x] Killed signals **deleted** from the tree, reason in `RISK_REGISTER.md`
 - [ ] No hardcoded decision thresholds in any signal (lint-enforced)
 
 **Gate:** baseline cross-source AUC reported; ≥2 of 3 survive → `[ ]`
@@ -288,3 +288,6 @@ Aggregate bar. All must be `[x]` before the project is called complete.
 | 2026-09-05 | Analysed `IDEA.md` + `farebi plan.txt`. Reconciled the two layouts into a two-runtime architecture. Authored `FAREBI.md`, `PLANS/00`–`PLANS/10`, and this checklist. No code written yet — workspace is greenfield. | None. Next up: `PLANS/01` foundation. |
 | 2026-09-05 | **Phase 01 implemented and shipped green.** Repo skeleton (`pyproject.toml`, `Makefile`, `configs/`, tooling), L0 `core/`+`utils/`, L1 `capture/` (incl. a two-backend MediaPipe adapter for the 0.10.35 API break + downloaded `face_landmarker.task`), empty L4 `inference/pipeline.py`, `scripts/smoke_test.py` + `scripts/fetch_face_landmarker.py`, `data/README.md` + `.gitkeep`s, `tests/fixtures/README.md`. Quality gates all pass: 167 tests, `ruff`, `ruff format`, `mypy --strict`, `importlinter`, smoke test (9 distinct rejection codes). Fixed real defects: `security.py:121` tuple precedence, PiiScrubber ordering, pipeline `response` trace, cv2 `fillConvexPoly` typing. | None. Next up: `PLANS/02` signal factory. |
 | 2026-09-05 | **Phase 02 signal factory — gate PASSED.** Wrote `scripts/run_harness.py` (self-test + `--samples` pickle modes) and two test suites: `tests/harness/test_gono.py` (golden go/no-go: noise→KILL, partial→BENCH, encoded→KEEP, plus boundary tests) and `tests/unit/test_registry.py` (a `kill`/`unmeasured` signal is excluded from `all_enabled()`). Fixed a real `config.py` bug: `YamlConfigSettingsSource.__init__` now accepts a single `Path` (was iterating a lone `Path` and raising). Stub `NoiseSignal` changed from random noise to a constant feature so its KILL is deterministic. Full suite: 174 passed, 0 failed; `ruff`/`mypy --strict` clean on changed files. Earlier also cloned 14 reference repos into `vendor/` (see memory). | None. Next up: Phase 03 data pipeline, then real Tier-1 signals (`signals/fft.py`, `texture.py`, `vit_clip.py`, …) adapted from `vendor/`. |
+| 2026-09-05 | **Tier-1a signals shipped.** `signals/prnu.py` (numpy+cv2 re-implementation of prnu-python wavelet-denoising stages — Gaussian residual + boxFilter Wiener + numpy Wiener-DFT), `fft.py`, `texture.py`, `replay_detect.py` (PRNU companion), `vit_clip.py` (Phase-06 stub). Fixed `test_layering` leaf rule to exempt the `farebi.signals.base` contract import; `cv2.Laplacian` CV_64F→CV_32F; calibrated thresholds on 6 Dresden naturals (peak-height flags removed). 174/174 pytest, ruff/mypy clean. Committed `e8bcb48`, pushed to `BeastAyyG/farebi` (master). | None. |
+| 2026-09-05 | **Vendor audit + roadmap update.** Cloned GenD (`yermandy/GenD`) and `polimi-ispl/synthetic-image-detection` (laundering caveat for PRNU); applied DeepFakesON-Phys open PR #2 vectorisation locally with tracked patch in `docs/vendor-patches/`; recorded prnu-python pins and rPPG-Toolbox lineage. Updated `vendor/clone_all.sh`, `vendor/README.md`, `PLANS/03` (DF40, Eval-2024, paired training), `PLANS/04` (CoOp/GenD/AIDE path), `PLANS/09` (red-team items). Committed `654370f`, pushed. | None. |
+| 2026-09-05 | **Tier-1b + first harness verdicts (quick256 shim).** Wrote `signals/corneal.py`, `geometry.py`, `ca.py`; `tests/unit/test_signals_tier1b.py` 11 passed. Data shim (Option A): 480 rows from bitmind 256px parquets (ffhq/celeba-hq real, sdxl/flux fake), 407 usable captures; iris-mapping assert passed on 215 real captures. Fixed real bug: mediapipe 0.10.35 `VisionRunningMode` renamed. Harness (`--n-splits 2`, degraded): KEEP prnu 0.907 / texture 0.875 / CA 0.884 / replay 0.862 / fft 0.730; KILL corneal 0.544 / geometry 0.559 / vit_clip (no torch). Corneal premise check on 1024px real portraits (n=31, eye 116px): IoU median 0.000 with working highlight extraction — premise kill, not resolution. Corneal + geometry **deleted** per PLANS/04; reasons in new `RISK_REGISTER.md`. Phase-04 2-of-3 survival gate satisfied (PRNU + CA); neural baseline + `models/` still open so the Phase-04 gate stays open. | Self-capture campaign (calendar lead time, blocks Phase-09 fairness gate) should start as a parallel workstream. |

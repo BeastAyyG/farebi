@@ -72,6 +72,7 @@ def run(
     samples_path: Path | None,
     dataset_version: str,
     config_path: Path | None,
+    n_splits: int = 5,
 ) -> HarnessReport:
     """Evaluate every signal, run the gate, and write the registry outputs."""
     if self_test:
@@ -106,9 +107,10 @@ def run(
     verdicts = []
     for signal in signals:
         # 3 real + 3 fake source groups in self-test -> n_splits must be <= 3.
-        n_splits = 3 if self_test else 5
+        # Real runs default to 5; small shims (e.g. 2+2 groups) pass --n-splits 2.
+        splits = 3 if self_test else n_splits
         evaluation = evaluate_signal(
-            signal, samples, dataset_version=dataset_version, n_splits=n_splits
+            signal, samples, dataset_version=dataset_version, n_splits=splits
         )
         evaluations.append(evaluation)
         from farebi.harness.gono import decide
@@ -127,8 +129,11 @@ def run(
         evaluations=evaluations,
         verdicts=verdicts,
         registry_version=f"harness-{dataset_version}",
-        notes=[f"evaluated {len(signals)} signal(s) in self-test mode" if self_test else
-               f"evaluated {len(signals)} signal(s) from farebi.signals"],
+        notes=[
+            f"evaluated {len(signals)} signal(s) in self-test mode"
+            if self_test
+            else f"evaluated {len(signals)} signal(s) from farebi.signals"
+        ],
     )
 
     written = write_reports(report)
@@ -145,17 +150,33 @@ def _print_summary(report: HarnessReport) -> None:
     print(f"dataset: {report.dataset_version}   registry: {report.registry_version}")
     print("verdicts: " + ", ".join(f"{k}={v}" for k, v in sorted(counts.items())) + "\n")
     for row in verdict_table_rows(report.verdicts):
-        print(f"  {row['signal']:<16} {row['status'].upper():<10} "
-              f"auc={row['auc']:<7} cov={row['coverage']:<5} {row['reason']}")
+        print(
+            f"  {row['signal']:<16} {row['status'].upper():<10} "
+            f"auc={row['auc']:<7} cov={row['coverage']:<5} {row['reason']}"
+        )
     print()
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--self-test", action="store_true", help="evaluate the in-repo stub signals")
-    parser.add_argument("--samples", type=Path, default=None, help="pickle of list[Sample] for real runs")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--self-test", action="store_true", help="evaluate the in-repo stub signals"
+    )
+    parser.add_argument(
+        "--samples", type=Path, default=None, help="pickle of list[Sample] for real runs"
+    )
     parser.add_argument("--dataset-version", default="self-test", help="recorded in every report")
-    parser.add_argument("--config", type=Path, default=None, help="override configs/signals.yaml path")
+    parser.add_argument(
+        "--config", type=Path, default=None, help="override configs/signals.yaml path"
+    )
+    parser.add_argument(
+        "--n-splits",
+        type=int,
+        default=5,
+        help="GroupKFold splits for real runs (must be <= #groups per side)",
+    )
     args = parser.parse_args(argv)
 
     configure_logging(level="INFO", json_logs=False)
@@ -164,6 +185,7 @@ def main(argv: list[str] | None = None) -> int:
         samples_path=args.samples,
         dataset_version=args.dataset_version,
         config_path=args.config,
+        n_splits=args.n_splits,
     )
     return 0
 

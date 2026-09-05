@@ -1,110 +1,310 @@
 {
-  "config_hash": "35b947bede851506a7adb1fe161cda3a4c108f96bfa6a6a9bbec085dd78f2e0c",
-  "created_at": "2026-09-04T22:47:44+00:00",
-  "dataset_version": "self-test",
+  "config_hash": "1a0ccaf116fc376938860807a54ac09fb492734cf8f990a27840fc6299abb832",
+  "created_at": "2026-09-05T01:43:11+00:00",
+  "dataset_version": "quick256",
   "evaluations": [
     {
-      "auc_std": 0.0,
-      "best_feature": "constant",
-      "coverage": 1.0,
-      "cross_source_auc": 0.5,
-      "dataset_version": "self-test",
+      "auc_std": 0.014821,
+      "best_feature": "ca_edge_patches",
+      "coverage": 0.786241,
+      "cross_source_auc": 0.884133,
+      "dataset_version": "quick256",
       "degraded": true,
-      "n_applicable": 60,
-      "n_folds_used": 3,
-      "n_samples": 60,
-      "n_splits": 3,
+      "n_applicable": 320,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
       "notes": [
         "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
       ],
       "per_feature_auc": {
-        "constant": 0.5
+        "ca_bg_slope": 0.571936,
+        "ca_edge_patches": 0.884133,
+        "ca_mean": 0.734165,
+        "ca_rg_slope": 0.563628,
+        "ca_slope_avg": 0.534654
       },
       "per_feature_direction": {
-        "constant": 1
+        "ca_bg_slope": -1,
+        "ca_edge_patches": -1,
+        "ca_mean": -1,
+        "ca_rg_slope": 1,
+        "ca_slope_avg": -1
       },
-      "signal": "stub_noise",
+      "signal": "chromatic_aberration",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.033684,
+      "best_feature": "corneal_count_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.544297,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 407,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "corneal_count_ratio": 0.544297,
+        "corneal_highlights_left": 0.528767,
+        "corneal_highlights_right": 0.52697,
+        "corneal_iou": 0.504587
+      },
+      "per_feature_direction": {
+        "corneal_count_ratio": -1,
+        "corneal_highlights_left": -1,
+        "corneal_highlights_right": -1,
+        "corneal_iou": -1
+      },
+      "signal": "corneal",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.001029,
+      "best_feature": "fft_high_freq_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.730027,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 407,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "fft_blockiness": 0.530884,
+        "fft_high_freq_ratio": 0.730027,
+        "fft_spectral_peak": 0.542444
+      },
+      "per_feature_direction": {
+        "fft_blockiness": 1,
+        "fft_high_freq_ratio": 1,
+        "fft_spectral_peak": -1
+      },
+      "signal": "fft",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.021476,
+      "best_feature": "iod_px",
+      "coverage": 1.0,
+      "cross_source_auc": 0.558938,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 407,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "chin_ratio": 0.509432,
+        "eye_open_asym": 0.546418,
+        "eye_width_asym": 0.535302,
+        "iod_px": 0.558938,
+        "mouth_dev": 0.525411,
+        "mouth_width_ratio": 0.54185,
+        "nose_dev": 0.514621
+      },
+      "per_feature_direction": {
+        "chin_ratio": 1,
+        "eye_open_asym": 1,
+        "eye_width_asym": 1,
+        "iod_px": 1,
+        "mouth_dev": -1,
+        "mouth_width_ratio": 1,
+        "nose_dev": -1
+      },
+      "signal": "geometry",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.002196,
+      "best_feature": "prnu_bg_energy",
+      "coverage": 1.0,
+      "cross_source_auc": 0.907395,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 407,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "prnu_bg_energy": 0.907395,
+        "prnu_face_bg_logratio": 0.879728,
+        "prnu_face_energy": 0.843451,
+        "prnu_face_mean_abs": 0.844249
+      },
+      "per_feature_direction": {
+        "prnu_bg_energy": -1,
+        "prnu_face_bg_logratio": 1,
+        "prnu_face_energy": -1,
+        "prnu_face_mean_abs": -1
+      },
+      "signal": "prnu",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.05479,
+      "best_feature": "replay_midband_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.862214,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 407,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "replay_midband_ratio": 0.862214,
+        "replay_moire_peak": 0.532794
+      },
+      "per_feature_direction": {
+        "replay_midband_ratio": -1,
+        "replay_moire_peak": 1
+      },
+      "signal": "replay_detect",
+      "skipped_folds": 0
+    },
+    {
+      "auc_std": 0.009026,
+      "best_feature": "texture_bg_sharpness",
+      "coverage": 0.995086,
+      "cross_source_auc": 0.874584,
+      "dataset_version": "quick256",
+      "degraded": true,
+      "n_applicable": 405,
+      "n_folds_used": 2,
+      "n_samples": 407,
+      "n_splits": 2,
+      "notes": [
+        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+      ],
+      "per_feature_auc": {
+        "texture_bg_sharpness": 0.874584,
+        "texture_face_sharpness": 0.839511,
+        "texture_residual_logratio": 0.813843,
+        "texture_sharpness_logratio": 0.797574
+      },
+      "per_feature_direction": {
+        "texture_bg_sharpness": -1,
+        "texture_face_sharpness": -1,
+        "texture_residual_logratio": 1,
+        "texture_sharpness_logratio": 1
+      },
+      "signal": "texture",
       "skipped_folds": 0
     },
     {
       "auc_std": 0.0,
-      "best_feature": "mean_luma",
-      "coverage": 1.0,
-      "cross_source_auc": 1.0,
-      "dataset_version": "self-test",
+      "best_feature": null,
+      "coverage": 0.0,
+      "cross_source_auc": null,
+      "dataset_version": "quick256",
       "degraded": true,
-      "n_applicable": 60,
-      "n_folds_used": 3,
-      "n_samples": 60,
-      "n_splits": 3,
+      "n_applicable": 0,
+      "n_folds_used": 0,
+      "n_samples": 407,
+      "n_splits": 2,
       "notes": [
-        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
+        "the signal produced no usable features on any sample."
       ],
-      "per_feature_auc": {
-        "mean_luma": 1.0
-      },
-      "per_feature_direction": {
-        "mean_luma": 1
-      },
-      "signal": "stub_encoded",
-      "skipped_folds": 0
-    },
-    {
-      "auc_std": 0.0,
-      "best_feature": "eligible_luma",
-      "coverage": 0.283333,
-      "cross_source_auc": 1.0,
-      "dataset_version": "self-test",
-      "degraded": true,
-      "n_applicable": 17,
-      "n_folds_used": 3,
-      "n_samples": 60,
-      "n_splits": 3,
-      "notes": [
-        "the best feature is selected on the same folds it is reported on, so its AUC is mildly optimistic; compare it against the other rows in per_feature_auc."
-      ],
-      "per_feature_auc": {
-        "eligible_luma": 1.0
-      },
-      "per_feature_direction": {
-        "eligible_luma": 1
-      },
-      "signal": "stub_partial",
+      "per_feature_auc": {},
+      "per_feature_direction": {},
+      "signal": "vit_clip",
       "skipped_folds": 0
     }
   ],
-  "git_sha": null,
+  "git_sha": "654370f727d3ce42d89de22e9bad0fe9e29b24e6",
   "notes": [
-    "evaluated 3 signal(s) in self-test mode"
+    "evaluated 8 signal(s) from farebi.signals"
   ],
-  "registry_version": "harness-self-test",
+  "registry_version": "harness-quick256",
   "verdicts": [
     {
-      "best_feature": "constant",
-      "coverage": 1.0,
-      "cross_source_auc": 0.5,
-      "evaluated_at": "2026-09-04T22:47:39+00:00",
-      "reason": "AUC 0.500 < 0.60 after degradation",
-      "signal": "stub_noise",
-      "status": "kill"
-    },
-    {
-      "best_feature": "mean_luma",
-      "coverage": 1.0,
-      "cross_source_auc": 1.0,
-      "evaluated_at": "2026-09-04T22:47:41+00:00",
-      "reason": "AUC 1.000 >= 0.65 and coverage 100% >= 50%",
-      "signal": "stub_encoded",
+      "best_feature": "ca_edge_patches",
+      "coverage": 0.786241,
+      "cross_source_auc": 0.884133,
+      "evaluated_at": "2026-09-05T01:39:49+00:00",
+      "reason": "AUC 0.884 >= 0.65 and coverage 79% >= 50%",
+      "signal": "chromatic_aberration",
       "status": "keep"
     },
     {
-      "best_feature": "eligible_luma",
-      "coverage": 0.283333,
-      "cross_source_auc": 1.0,
-      "evaluated_at": "2026-09-04T22:47:44+00:00",
-      "reason": "AUC 1.000 >= 0.60 but coverage 28% < 50%; usable only when applicable, quality-gated",
-      "signal": "stub_partial",
-      "status": "bench"
+      "best_feature": "corneal_count_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.544297,
+      "evaluated_at": "2026-09-05T01:40:07+00:00",
+      "reason": "AUC 0.544 < 0.60 after degradation",
+      "signal": "corneal",
+      "status": "kill"
+    },
+    {
+      "best_feature": "fft_high_freq_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.730027,
+      "evaluated_at": "2026-09-05T01:40:48+00:00",
+      "reason": "AUC 0.730 >= 0.65 and coverage 100% >= 50%",
+      "signal": "fft",
+      "status": "keep"
+    },
+    {
+      "best_feature": "iod_px",
+      "coverage": 1.0,
+      "cross_source_auc": 0.558938,
+      "evaluated_at": "2026-09-05T01:41:06+00:00",
+      "reason": "AUC 0.559 < 0.60 after degradation",
+      "signal": "geometry",
+      "status": "kill"
+    },
+    {
+      "best_feature": "prnu_bg_energy",
+      "coverage": 1.0,
+      "cross_source_auc": 0.907395,
+      "evaluated_at": "2026-09-05T01:41:51+00:00",
+      "reason": "AUC 0.907 >= 0.65 and coverage 100% >= 50%",
+      "signal": "prnu",
+      "status": "keep"
+    },
+    {
+      "best_feature": "replay_midband_ratio",
+      "coverage": 1.0,
+      "cross_source_auc": 0.862214,
+      "evaluated_at": "2026-09-05T01:42:30+00:00",
+      "reason": "AUC 0.862 >= 0.65 and coverage 100% >= 50%",
+      "signal": "replay_detect",
+      "status": "keep"
+    },
+    {
+      "best_feature": "texture_bg_sharpness",
+      "coverage": 0.995086,
+      "cross_source_auc": 0.874584,
+      "evaluated_at": "2026-09-05T01:42:53+00:00",
+      "reason": "AUC 0.875 >= 0.65 and coverage 100% >= 50%",
+      "signal": "texture",
+      "status": "keep"
+    },
+    {
+      "best_feature": null,
+      "coverage": 0.0,
+      "cross_source_auc": null,
+      "evaluated_at": "2026-09-05T01:43:11+00:00",
+      "reason": "no fold produced a defined AUC, so the signal carries no measurable evidence",
+      "signal": "vit_clip",
+      "status": "kill"
     }
   ]
 }

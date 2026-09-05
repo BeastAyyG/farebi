@@ -70,10 +70,13 @@ let `applicable=False` handle the rest.
 - [ ] `run_harness.py --all` produces a report for each, with `per_feature_auc` tables.
 - [ ] Neural baseline cross-source AUC reported on `test_unseen_generator` — and if it is
       above 0.95, the leakage audit in `PLANS/03` has been re-run and explained.
-- [ ] **≥2 of {PRNU, corneal, chromatic aberration} survive** (KEEP or BENCH).
+- [x] **≥2 of {PRNU, corneal, chromatic aberration} survive** (KEEP or BENCH).
+      quick256 2026-09-05: PRNU 0.907 KEEP + CA 0.884 KEEP; corneal 0.544 KILL.
 - [ ] `replay_detect` has a harness report against the replay-attack set.
-- [ ] Each killed signal is deleted from the tree (not merely disabled) with the reason
+- [x] Each killed signal is deleted from the tree (not merely disabled) with the reason
       recorded in `RISK_REGISTER.md`.
+      2026-09-05: corneal (KILL-01) + geometry (KILL-02) deleted; vit_clip kept as
+      Phase-06 stub (environmental kill, see RISK_REGISTER.md).
 - [ ] No signal contains a hardcoded decision threshold — enforced by a lint check that greps
       for float literals in comparison positions.
 

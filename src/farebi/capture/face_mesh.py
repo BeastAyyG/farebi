@@ -1,9 +1,10 @@
 """MediaPipe face-landmark wrapper, with two interchangeable backends.
 
-MediaPipe is used **instead of dlib** because two downstream signals need iris
-landmarks: ``corneal.py`` (binocular reflection consistency, Tier-1) and
-``scleral.py`` (vessel topology, Tier-3). dlib's 68-point model has no iris
-points at all. This decision is made once, here, so it does not get relitigated.
+MediaPipe is used **instead of dlib** because downstream signals need iris
+landmarks: ``scleral.py`` (vessel topology, Tier-3) is the remaining consumer
+now that the corneal highlight signal was harness-killed and deleted.
+dlib's 68-point model has no iris points at all. This decision is made once,
+here, so it does not get relitigated.
 
 Landmark counts:
 * 468 points in the base mesh.
@@ -257,11 +258,15 @@ class _TasksBackend(_Backend):
         from pathlib import Path
 
         from mediapipe.tasks.python import BaseOptions
-        from mediapipe.tasks.python.vision import (
-            FaceLandmarker,
-            FaceLandmarkerOptions,
-            VisionRunningMode,
-        )
+        from mediapipe.tasks.python.vision import FaceLandmarker, FaceLandmarkerOptions
+
+        try:
+            # MediaPipe <= 0.10.x exposes the enum at the vision package root.
+            from mediapipe.tasks.python.vision import VisionRunningMode
+        except ImportError:  # MediaPipe >= 0.10.35 renamed it.
+            from mediapipe.tasks.python.vision.core.vision_task_running_mode import (
+                VisionTaskRunningMode as VisionRunningMode,
+            )
 
         path = Path(model_path)
         if not path.is_file():
