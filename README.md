@@ -19,10 +19,25 @@ Farebi takes one uploaded face image and returns one of four verdicts:
 
 ## Status
 
-Phase 01 (foundation) is implemented: repository skeleton, config layer,
-PII-safe logging, upload security boundary, face/landmark capture, and an
-**empty** orchestration pipeline that one image can traverse end-to-end.
-No detection logic exists yet, on purpose.
+Phases 00–02 are done (foundation, signal factory + harness). Tier-1 signals
+are implemented and have passed through the go/no-go harness once
+(`quick256`, n=407, degraded-mode, `n_splits=2`):
+
+| Signal | AUC | Verdict |
+| --- | --- | --- |
+| `prnu.py` | 0.907 | **KEEP** |
+| `chromatic_aberration.py` | 0.884 | **KEEP** |
+| `texture.py` | 0.875 | **KEEP** |
+| `replay_detect.py` | 0.862 | **KEEP** |
+| `fft.py` | 0.730 | **KEEP** |
+| `corneal.py` | 0.544 | **KILLED** — deleted, see `RISK_REGISTER.md` KILL-01 |
+| `geometry.py` | 0.559 | **KILLED** — deleted, see `RISK_REGISTER.md` KILL-02 |
+| `vit_clip.py` | n/a | Environmental kill (no torch) — kept as Phase-06 re-entry slot |
+
+Phase 04's gate (≥2 of {PRNU, corneal, CA} survive) passes via PRNU + CA.
+Still open before the gate fully closes: `models/` + train/evaluate scripts,
+the no-hardcoded-thresholds lint rule, and CA/PRNU re-validation on
+high-res + laundered data.
 
 Full plan: [`FAREBI.md`](./FAREBI.md) · Checklist: [`PROGRESS.md`](./PROGRESS.md) ·
 Sub-plans: [`PLANS/`](./PLANS)
@@ -117,10 +132,13 @@ OFFLINE  harness, evaluation   <- never imported by serving code
 
 ## Known limitations
 
-* No detection logic yet. Every verdict from the foundation pipeline is
-  `None`; `unable_to_assess` is emitted only for inputs that cannot be captured.
-* Face-mesh landmark index groups in `capture/landmarks.py` are approximate and
-  will be refined during Phase 04 signal work.
+* No fusion, calibration, or API yet. Signals emit features; nothing produces
+  a verdict — the serving pipeline is still the foundation stub that returns
+  `None` / `unable_to_assess`.
+* Harness numbers above are directional (256px research data, 2 source groups
+  per class). CA and PRNU must be re-validated on high-res + laundered data
+  before Phase 04's gate fully closes.
+* Face-mesh landmark index groups in `capture/landmarks.py` are approximate.
 * Fairness slices are not yet measurable: that requires the Phase 03
   self-capture campaign.
 

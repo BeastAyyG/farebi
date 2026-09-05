@@ -216,14 +216,14 @@ D:\Farebi\
 │   │   ├── vit_clip.py        CLIP-ViT features + linear probe (UnivFD-style)
 │   │   ├── prnu.py            sensor-noise presence
 │   │   ├── replay_detect.py   moiré / gamut / specular — PRNU's required partner
-│   │   ├── corneal.py         binocular reflection consistency
-│   │   ├── chromatic_aberration.py
+│   │   ├── corneal.py         DELETED — harness-KILLED (KILL-01, AUC 0.544)
+│   │   ├── chromatic_aberration.py   KEEP (AUC 0.884)
 │   │   ├── rppg.py            POS/CHROM, video + still perfusion
 │   │   ├── sss_active.py      active-illumination subsurface scattering
 │   │   ├── scleral.py         vein topology / Murray's Law
 │   │   ├── weather.py         submission-consistency signal
 │   │   ├── metadata.py        EXIF — context only, never proof
-│   │   └── geometry.py        landmark / iris consistency
+│   │   └── geometry.py        DELETED — harness-KILLED (KILL-02, AUC 0.559)
 │   │
 │   ├── models/                L3
 │   │   ├── backbone.py        CLIP-ViT frozen feature extractor
@@ -519,22 +519,26 @@ ambiguous:             [unknown_edit, heavy_beauty_filter]
 Six conventional signals + seven unconventional + replay detection. **Expect only 4–6 to
 survive the harness. That is a win** — diversity of survivors matters far more than count.
 
-| # | Signal | Tier | Module | Known risk / mitigation |
+First harness run (quick256, n=407, degraded-mode, `n_splits=2`, 2026-09-05):
+**5 KEEP, 2 KILL, 1 environmental.** Verdicts are recorded per-row below;
+kill reasons live in `RISK_REGISTER.md`.
+
+| # | Signal | Tier | Module | Known risk / mitigation · **harness verdict** |
 | --- | --- | --- | --- | --- |
-| 1 | Frequency domain (FFT) | 1 | `signals/fft.py` | Generator-specific; low ψ vs high ψ differ |
-| 2 | Texture & spatial artifacts | 1 | `signals/texture.py` | Dies under heavy JPEG — measure, don't assume |
-| 3 | CLIP-ViT linear probe | 1 | `signals/vit_clip.py` | Overfits training generators; prefer frozen CLIP features |
-| 4 | PRNU sensor-noise presence | 1 | `signals/prnu.py` | **Does not prove the face is real** — a screen replay has genuine PRNU. Requires #5. |
-| 5 | Screen-replay detection | 1 | `signals/replay_detect.py` | Moiré (FFT peak at pixel pitch), display gamut, specular rectangle, flat depth |
-| 6 | Corneal reflection consistency | 1 | `signals/corneal.py` | Needs eye ≥ 40px — solve with capture UX ("move closer"), not code |
-| 7 | Chromatic aberration | 1 | `signals/chromatic_aberration.py` | Modern ISPs correct CA aggressively; may be weak. Run on full frame. |
+| 1 | Frequency domain (FFT) | 1 | `signals/fft.py` | Generator-specific; low ψ vs high ψ differ · **KEEP (AUC 0.730)** |
+| 2 | Texture & spatial artifacts | 1 | `signals/texture.py` | Dies under heavy JPEG — measure, don't assume · **KEEP (AUC 0.875)** |
+| 3 | CLIP-ViT linear probe | 1 | `signals/vit_clip.py` | Overfits training generators; prefer frozen CLIP features · **ENVIRONMENTAL KILL (no torch/weights) — file kept as Phase-06 re-entry slot** |
+| 4 | PRNU sensor-noise presence | 1 | `signals/prnu.py` | **Does not prove the face is real** — a screen replay has genuine PRNU. Requires #5. · **KEEP (AUC 0.907)** — must be re-validated on laundered fakes before the Phase-04 gate closes |
+| 5 | Screen-replay detection | 1 | `signals/replay_detect.py` | Moiré (FFT peak at pixel pitch), display gamut, specular rectangle, flat depth · **KEEP (AUC 0.862)** |
+| 6 | Corneal reflection consistency | 1 | ~~`signals/corneal.py`~~ | Needs eye ≥ 40px — solve with capture UX ("move closer"), not code · **KILLED (AUC 0.544, KILL-01) — premise dead on real portraits, file deleted** |
+| 7 | Chromatic aberration | 1 | `signals/chromatic_aberration.py` | Modern ISPs correct CA aggressively; may be weak. Run on full frame. · **KEEP (AUC 0.884)** — re-validate on high-res before the gate closes |
 | 8 | rPPG video pulse (POS/CHROM) | 2 | `signals/rppg.py` | Needs ≥5s at ≥20fps; **SNR drops on darker skin — fairness-tested, weight-gated** |
 | 9 | Active-illumination SSS | 2 | `signals/sss_active.py` | Dark→bright frame pair 100ms apart; also defeats replay (random color sequence) |
 | 10 | rPPG still perfusion map | 3 | `signals/rppg.py` | Weakest of the set; low expectations, ready to kill |
 | 11 | Scleral vein topology | 3 | `signals/scleral.py` | Needs eye crop ≥80px → low coverage. Quality-gated bonus. |
 | 12 | Weather witness | 3 | `signals/weather.py` | EXIF GPS is stripped by browsers — take GPS/time from **our SDK**. Indoor/outdoor gate first. |
 | 13 | EXIF / metadata forensics | 3 | `signals/metadata.py` | **Context, never proof.** Absence of EXIF proves nothing. |
-| 14 | Facial geometry / iris consistency | 1 | `signals/geometry.py` | Landmark noise on low-res |
+| 14 | Facial geometry / iris consistency | 1 | ~~`signals/geometry.py`~~ | Landmark noise on low-res · **KILLED (AUC 0.559, KILL-02) — file deleted** |
 
 **Active illumination is the unfair advantage.** We control the capture app. Flashing
 screen-dark → screen-bright 100ms apart isolates our own light source, cancels ambient

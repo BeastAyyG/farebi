@@ -8,9 +8,9 @@ If these ever disagree, `FAREBI.md` wins — then amend `FAREBI.md` and re-align
 | # | Sub-plan | Phase | Depends on | Status |
 | --- | --- | --- | --- | --- |
 | 01 | [Foundation](./01-foundation.md) | 0 — repo, config, security, capture | — | 🟩 Gate passed |
-| 02 | [Signal factory](./02-signal-factory.md) | 1 — contract, registry, degradation, harness | 01 | ⬜ Not started |
+| 02 | [Signal factory](./02-signal-factory.md) | 1 — contract, registry, degradation, harness | 01 | 🟩 Gate passed |
 | 03 | [Data](./03-data.md) | 2 — loaders, manifests, splits, leakage audit | 01, 02 | ⬜ Not started |
-| 04 | [Tier-1 signals](./04-signals-tier1.md) | 3 — FFT, texture, CLIP-ViT, PRNU, replay, corneal, CA | 02, 03 | ⬜ Not started |
+| 04 | [Tier-1 signals](./04-signals-tier1.md) | 3 — FFT, texture, CLIP-ViT, PRNU, replay, corneal, CA | 02, 03 | 🟨 In progress — signals built + harness-run (5 KEEP, 2 KILL, 1 environmental); models/train/threshold-lint still open |
 | 05 | [Tier-2 signals](./05-signals-tier2.md) | 4 — video rPPG, active illumination SSS | 02, 03, 04 | ⬜ Not started |
 | 06 | [Tier-3 signals](./06-signals-tier3.md) | 5 — still rPPG, scleral veins, weather, metadata, geometry | 02, 03 | ⬜ Not started |
 | 07 | [Fusion & uncertainty](./07-fusion-uncertainty.md) | 6 — fusion, calibration, conformal band, policy, explain | 04, 05, 06 | ⬜ Not started |
