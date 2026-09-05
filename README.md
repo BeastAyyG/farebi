@@ -95,6 +95,20 @@ every verdict and every error state — is demoable before the API exists. See
 [`frontend/README.md`](./frontend/README.md) for the requirement-to-file map
 and [`frontend/DESIGN.md`](./frontend/DESIGN.md) for the palette rationale.
 
+## Reviewer backend (real detections)
+
+`src/farebi/api/` serves the five harness-measured KEEP signals over
+`POST /v1/detect` (multipart `file` field), with the exact `DetectResponse`
+shape from `frebi.md` A.13. The verdict rule is an explicitly uncalibrated v0
+heuristic (`threshold_version: "uncalibrated-0.0.0"` in every response) until
+`scripts/tune_thresholds.py` produces `artifacts/thresholds.json`.
+
+```bash
+.venv/Scripts/python.exe -m uvicorn farebi.api.app:app --port 8000
+# frontend/.env.local: VITE_MOCK_API=false  (Vite proxies /v1 → :8000)
+# dev servers: API on :8000, reviewer console on :5173
+```
+
 ## Verify
 
 ```bash

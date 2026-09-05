@@ -1,8 +1,8 @@
 {
   "artifact": "signal_registry.json",
-  "created_at": "2026-09-05T01:43:11+00:00",
+  "created_at": "2026-09-05T13:16:50+00:00",
   "dataset_version": "quick256",
-  "git_sha": "654370f727d3ce42d89de22e9bad0fe9e29b24e6",
+  "git_sha": "f2a2e7d77deb87a3c012e468325325361da73a1a",
   "packages": {
     "mediapipe": "0.10.35",
     "numpy": "2.5.2",
@@ -13,5 +13,5 @@
   "platform": "Windows-11-10.0.26200-SP0",
   "python": "3.13.14",
   "registry_version": "harness-quick256",
-  "sha256": "743cc6008b765c484471bc93bdb51567b5b4fd66b050cde8a37caa76f8e0880b"
+  "sha256": "fcf83f0c3070ddd63e00c148dd5035cea774c5c65cbb18a7d39a3638235c110a"
 }

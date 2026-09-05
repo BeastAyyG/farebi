@@ -60,7 +60,13 @@ class TestDiscovery:
         registry = SignalRegistry()
         names = registry.discover()
         assert {"chromatic_aberration"} <= set(names)
-        assert registry.is_fusion_eligible("chromatic_aberration") is False
+        # Fail-closed must not depend on the machine-owned live config
+        # (configs/signals.yaml carries harness-measured verdicts): an
+        # unknown signal falls back to `unmeasured`, which is ineligible...
+        assert registry.is_fusion_eligible("definitely_not_a_signal") is False
+        # ...and a harness-measured kill stays excluded even though the
+        # plugin imports cleanly.
+        assert registry.is_fusion_eligible("vit_clip") is False
 
 
 class TestChromaticAberration:
