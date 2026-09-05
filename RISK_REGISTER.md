@@ -97,3 +97,35 @@ evidence.
   (0.05-0.45), so separation is partly plumbing validation; simulated
   replays carry no photographing-camera PRNU, so PRNU numbers on this
   probe are simulation artifacts — neither credited nor charged.
+
+## DIRECTIONAL — face-MORPH response is an upper bound, not coverage
+
+- 2026-09-05 morph probe (`quick256-morph`, n=318 real vs landmark-morph,
+  new `scripts/attack_morph.py`): sequential ffhq/celeba-hq pairs,
+  eye-midpoint/iod/angle similarity alignment to a natural-scale 256px
+  canvas (dst_iod 56px, scale ~1.0), alpha-0.5 blend inside a feathered
+  FACE_OVAL mask, lossless PNGs. Manifest
+  `data/manifests/quick_morph_manifest.csv`; 103/107 morphs kept.
+- Probe AUCs (n_splits=2): prnu **0.779**, texture **0.766**,
+  replay_detect **0.679**, CA **0.675**, fft **0.641** (BENCH band),
+  vit_clip n/a (no torch). All five synthetic-fake KEEPs respond to
+  morphs, but weaker across the board than to diffusion fakes.
+- Mechanism (per-feature medians, real vs morph): prnu_face_energy
+  10.2 -> 6.0, prnu_bg_energy 100.3 -> 20.9 (BOTH parents are warped, so
+  the whole frame including A's background is resampling-softened);
+  texture logratios move toward 0 (face/bg homogenised by smoothing).
+  The separation is carried substantially by whole-frame resampling
+  softness from this crude pipeline, NOT by morph-specific cues
+  (no seam/ghost/demographic-shift features exist yet).
+- Recipe bugs fixed along the way (all in the attack script, not shipped
+  code): v1 dst_iod 77px zoomed faces and starved bg estimators
+  (prnu_bg_energy -> 0.0, texture inapplicable — a bogus PRNU 1.000);
+  v2 dst_iod 30px confused single-eye width with iod and halved every
+  head (FACE_TOO_SMALL); default warpAffine black fill tripped the
+  clipped-pixel gate (fixed with BORDER_REPLICATE).
+- Consequence: treat these numbers as an UPPER BOUND on morph
+  detectability. A professional pipeline (high-res warp + Poisson blend
+  + grain matching, then downsample) would close most of the resampling
+  gap. Structural defence is enrolment-time duplicate-identity /
+  dedicated morph-detection models — future work needing morph training
+  data + torch. Do not claim morph coverage.
