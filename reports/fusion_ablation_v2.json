@@ -1,0 +1,58 @@
+{
+  "dataset": "data\\interim\\quick_features_v2.csv",
+  "n_samples": 503,
+  "mean_baseline_auc": 0.9127033849179389,
+  "leave_one_signal_out": {
+    "fft": {
+      "n_features": 3,
+      "mean_auc_delta_when_dropped": 0.0014982532016346584
+    },
+    "texture": {
+      "n_features": 4,
+      "mean_auc_delta_when_dropped": 0.004277084470053556
+    },
+    "prnu": {
+      "n_features": 4,
+      "mean_auc_delta_when_dropped": -0.0004826371807880407
+    },
+    "replay_detect": {
+      "n_features": 2,
+      "mean_auc_delta_when_dropped": 0.014964876857690101
+    },
+    "chromatic_aberration": {
+      "n_features": 5,
+      "mean_auc_delta_when_dropped": 0.0626973493793191
+    }
+  },
+  "held_out_group_median_scores": {
+    "ffhq1024": {
+      "median_test_score": 0.09256738041304273,
+      "label": 0
+    },
+    "flux-celeba": {
+      "median_test_score": 0.8293188524454812,
+      "label": 1
+    },
+    "celeba-hq": {
+      "median_test_score": 0.1417200827117735,
+      "label": 0
+    },
+    "flux": {
+      "median_test_score": 0.8383669859217668,
+      "label": 1
+    },
+    "ffhq": {
+      "median_test_score": 0.026585533943246,
+      "label": 0
+    },
+    "sdxl": {
+      "median_test_score": 0.8803939721642998,
+      "label": 1
+    }
+  },
+  "notes": [
+    "positive delta = AUC lost without the signal = unique evidence.",
+    "group medians near 0.5 mark the domains fusion handles worst.",
+    "sdxl has only 33 rows: its fold estimates are the noisiest."
+  ]
+}
