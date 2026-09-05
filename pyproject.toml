@@ -131,6 +131,7 @@ pretty = true
 module = [
     "cv2.*",
     "mediapipe.*",
+    "pandas.*",
     "sklearn.*",
     "scipy.*",
     "PIL.*",

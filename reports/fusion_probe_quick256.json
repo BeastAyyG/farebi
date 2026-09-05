@@ -1,0 +1,68 @@
+{
+  "dataset": "data\\interim\\quick_features.csv",
+  "n_samples": 318,
+  "n_features": 18,
+  "features": [
+    "fft__fft_high_freq_ratio",
+    "fft__fft_spectral_peak",
+    "fft__fft_blockiness",
+    "texture__texture_face_sharpness",
+    "texture__texture_bg_sharpness",
+    "texture__texture_sharpness_logratio",
+    "texture__texture_residual_logratio",
+    "prnu__prnu_face_energy",
+    "prnu__prnu_bg_energy",
+    "prnu__prnu_face_bg_logratio",
+    "prnu__prnu_face_mean_abs",
+    "replay_detect__replay_moire_peak",
+    "replay_detect__replay_midband_ratio",
+    "chromatic_aberration__ca_rg_slope",
+    "chromatic_aberration__ca_bg_slope",
+    "chromatic_aberration__ca_slope_avg",
+    "chromatic_aberration__ca_mean",
+    "chromatic_aberration__ca_edge_patches"
+  ],
+  "mean_auc_raw": 0.9060088258634216,
+  "mean_auc_cal": 0.9041889130429897,
+  "mean_uncertain_rate": 0.10182468550299428,
+  "mean_error_given_certain": 0.123965912488787,
+  "notes": [
+    "isotonic fit in-sample on train fold: calibration mildly optimistic.",
+    "single 70/30-style source split per fold (n_splits=2): directional only.",
+    "best single signal on this data is prnu at 0.907 cross-source AUC."
+  ],
+  "folds": [
+    {
+      "held_out": [
+        "celeba-hq",
+        "flux"
+      ],
+      "n_train": 139,
+      "n_test": 179,
+      "auc_raw": 0.8866317169069462,
+      "auc_cal": 0.8834207077326344,
+      "brier_raw": 0.12831512632514,
+      "brier_cal": 0.15037626546529928,
+      "q_lo": 0.16000000000000003,
+      "q_hi": 0.2,
+      "uncertain_rate": 0.11731843575418999,
+      "error_given_certain": 0.14556962025316456
+    },
+    {
+      "held_out": [
+        "ffhq",
+        "sdxl"
+      ],
+      "n_train": 179,
+      "n_test": 139,
+      "auc_raw": 0.9253859348198971,
+      "auc_cal": 0.9249571183533449,
+      "brier_raw": 0.0947541493689483,
+      "brier_cal": 0.10341838217916105,
+      "q_lo": 0.18423913043478263,
+      "q_hi": 0.5,
+      "uncertain_rate": 0.08633093525179858,
+      "error_given_certain": 0.10236220472440945
+    }
+  ]
+}
