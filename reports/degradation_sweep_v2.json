@@ -1,0 +1,187 @@
+{
+  "pristine": {
+    "fft": {
+      "auc": 0.9745770874528592,
+      "auc_std": 0.030267522232303994,
+      "coverage": 1.0,
+      "best_feature": "fft_high_freq_ratio",
+      "status": "keep"
+    },
+    "texture": {
+      "auc": 0.9648658337353727,
+      "auc_std": 0.017580645361604138,
+      "coverage": 0.7959183673469388,
+      "best_feature": "texture_face_sharpness",
+      "status": "keep"
+    },
+    "prnu": {
+      "auc": 0.9667241544331051,
+      "auc_std": 0.026830233600227172,
+      "coverage": 1.0,
+      "best_feature": "prnu_face_mean_abs",
+      "status": "keep"
+    },
+    "replay_detect": {
+      "auc": 0.8915147561160146,
+      "auc_std": 0.060890554560795236,
+      "coverage": 1.0,
+      "best_feature": "replay_moire_peak",
+      "status": "keep"
+    },
+    "chromatic_aberration": {
+      "auc": 0.8984688926827631,
+      "auc_std": 0.030868723425189964,
+      "coverage": 1.0,
+      "best_feature": "ca_edge_patches",
+      "status": "keep"
+    }
+  },
+  "q95": {
+    "fft": {
+      "auc": 0.7628989545798767,
+      "auc_std": 0.03749840435560303,
+      "coverage": 1.0,
+      "best_feature": "fft_high_freq_ratio",
+      "status": "keep"
+    },
+    "texture": {
+      "auc": 0.8769823996750413,
+      "auc_std": 0.0712926140554336,
+      "coverage": 0.989010989010989,
+      "best_feature": "texture_face_sharpness",
+      "status": "keep"
+    },
+    "prnu": {
+      "auc": 0.8744750319589013,
+      "auc_std": 0.07534869727653476,
+      "coverage": 1.0,
+      "best_feature": "prnu_face_energy",
+      "status": "keep"
+    },
+    "replay_detect": {
+      "auc": 0.8943627798073419,
+      "auc_std": 0.08434646121238745,
+      "coverage": 1.0,
+      "best_feature": "replay_midband_ratio",
+      "status": "keep"
+    },
+    "chromatic_aberration": {
+      "auc": 0.9197116504275429,
+      "auc_std": 0.0361654223646176,
+      "coverage": 0.8100470957613815,
+      "best_feature": "ca_edge_patches",
+      "status": "keep"
+    }
+  },
+  "q75": {
+    "fft": {
+      "auc": 0.6772468507178836,
+      "auc_std": 0.005180991955559843,
+      "coverage": 1.0,
+      "best_feature": "fft_high_freq_ratio",
+      "status": "keep"
+    },
+    "texture": {
+      "auc": 0.8796870599416741,
+      "auc_std": 0.06509287793086968,
+      "coverage": 0.989010989010989,
+      "best_feature": "texture_face_sharpness",
+      "status": "keep"
+    },
+    "prnu": {
+      "auc": 0.8825942592264076,
+      "auc_std": 0.06927042881728372,
+      "coverage": 1.0,
+      "best_feature": "prnu_face_energy",
+      "status": "keep"
+    },
+    "replay_detect": {
+      "auc": 0.893725712670514,
+      "auc_std": 0.08488893092105444,
+      "coverage": 1.0,
+      "best_feature": "replay_midband_ratio",
+      "status": "keep"
+    },
+    "chromatic_aberration": {
+      "auc": 0.9051502334148983,
+      "auc_std": 0.03290301846015914,
+      "coverage": 0.8351648351648352,
+      "best_feature": "ca_edge_patches",
+      "status": "keep"
+    }
+  },
+  "q50": {
+    "fft": {
+      "auc": 0.645992817361616,
+      "auc_std": 0.006847255663641945,
+      "coverage": 1.0,
+      "best_feature": "fft_high_freq_ratio",
+      "status": "bench"
+    },
+    "texture": {
+      "auc": 0.8904900618995356,
+      "auc_std": 0.06248821185315077,
+      "coverage": 0.989010989010989,
+      "best_feature": "texture_face_sharpness",
+      "status": "keep"
+    },
+    "prnu": {
+      "auc": 0.8950960218049623,
+      "auc_std": 0.06512654706332544,
+      "coverage": 1.0,
+      "best_feature": "prnu_face_energy",
+      "status": "keep"
+    },
+    "replay_detect": {
+      "auc": 0.8935622655873177,
+      "auc_std": 0.08493853751928611,
+      "coverage": 1.0,
+      "best_feature": "replay_midband_ratio",
+      "status": "keep"
+    },
+    "chromatic_aberration": {
+      "auc": 0.9168752151924364,
+      "auc_std": 0.03165068151873952,
+      "coverage": 0.8492935635792779,
+      "best_feature": "ca_edge_patches",
+      "status": "keep"
+    }
+  },
+  "q30": {
+    "fft": {
+      "auc": 0.5927824424678074,
+      "auc_std": 0.018581248574432083,
+      "coverage": 1.0,
+      "best_feature": "fft_high_freq_ratio",
+      "status": "kill"
+    },
+    "texture": {
+      "auc": 0.8793924854001421,
+      "auc_std": 0.062185773072446715,
+      "coverage": 0.989010989010989,
+      "best_feature": "texture_face_sharpness",
+      "status": "keep"
+    },
+    "prnu": {
+      "auc": 0.881349765580929,
+      "auc_std": 0.06813272950536846,
+      "coverage": 1.0,
+      "best_feature": "prnu_face_energy",
+      "status": "keep"
+    },
+    "replay_detect": {
+      "auc": 0.8886719931197357,
+      "auc_std": 0.08860012365596925,
+      "coverage": 1.0,
+      "best_feature": "replay_midband_ratio",
+      "status": "keep"
+    },
+    "chromatic_aberration": {
+      "auc": 0.9061560142486379,
+      "auc_std": 0.02537688263291069,
+      "coverage": 0.8885400313971743,
+      "best_feature": "ca_edge_patches",
+      "status": "keep"
+    }
+  }
+}
