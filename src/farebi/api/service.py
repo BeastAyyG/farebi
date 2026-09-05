@@ -21,6 +21,7 @@ Layer: L8 api (may import L0-L2; must never import harness/evaluation).
 
 from __future__ import annotations
 
+import json
 import uuid
 from pathlib import Path
 from typing import Any, Final
@@ -58,6 +59,180 @@ _ALLOWED_SUFFIXES: Final = frozenset({".jpg", ".jpeg", ".png"})
 _ALLOWED_MEDIA_TYPES: Final = frozenset({"image/jpeg", "image/png"})
 
 _THRESHOLDS_PATH: Final = Path(__file__).resolve().parents[3] / "configs" / "thresholds.yaml"
+
+_CLIP_MODEL = None
+#: Research-drop checkpoint (605 MB full state dict, trained on quick256-v2,
+#: cross-source AUC 0.9229 ± 0.0733). Borrowed-model lineage: a CLIP ViT-B/32
+#: linear probe in the GenD style (``vendor/GenD``); the sanctioned Phase-06
+#: weights drop belongs at ``artifacts/models/`` and will replace this path.
+_CLIP_MODEL_WEIGHT_CANDIDATES: Final = (
+    Path(__file__).resolve().parents[3] / "models" / "weights" / "clip_probe_v2.pt" / "clip_linear_probe_best.pt",
+    Path(__file__).resolve().parents[3] / "models" / "weights" / "clip_linear_probe_best.pt",
+    Path(__file__).resolve().parents[3] / "artifacts" / "models" / "clip-vit-fake.pt",
+)
+
+_FUSION_ARTIFACT_DIR: Final = Path(__file__).resolve().parents[3] / "artifacts" / "fusion"
+_FUSION_SCALER_PATH = _FUSION_ARTIFACT_DIR / "scaler.pkl"
+_FUSION_CLF_PATH = _FUSION_ARTIFACT_DIR / "classifier.pkl"
+_FUSION_ISO_PATH = _FUSION_ARTIFACT_DIR / "isotonic.pkl"
+_FUSION_BAND_PATH = _FUSION_ARTIFACT_DIR / "band.json"
+_FUSION_FEATURE_NAMES_PATH = _FUSION_ARTIFACT_DIR / "feature_names.json"
+
+_CLIP_MODEL = None
+_FUSION_SCALER = None
+_FUSION_CLF = None
+_FUSION_ISO = None
+_FUSION_BAND = None
+_FUSION_FEATURE_NAMES = None
+
+
+def _clip_weight_path() -> Path | None:
+    for candidate in _CLIP_MODEL_WEIGHT_CANDIDATES:
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _get_clip_model():  # type: ignore[no-untyped-def]
+    """Lazily load the borrowed CLIP probe; ``None`` when unavailable.
+
+    Torch is imported here, not at module import, so the serving slice stays
+    importable (and testable) on machines without the ``ml`` extra. A missing
+    checkpoint is absent evidence, never a 500 — the caller falls through to
+    the next fallback tier.
+    """
+    global _CLIP_MODEL
+    if _CLIP_MODEL is not None:
+        return _CLIP_MODEL
+    weight_path = _clip_weight_path()
+    if weight_path is None:
+        return None
+    try:
+        import torch
+
+        from farebi.models import build_model
+
+        model = build_model(
+            "clip_linear_probe",
+            num_classes=2,
+            device="cuda" if torch.cuda.is_available() else "cpu",
+        )
+        model.load_state_dict(torch.load(weight_path, map_location=model.device))
+        model.eval()
+        _CLIP_MODEL = model
+        return model
+    except Exception:
+        return None
+
+def _load_fusion_artifacts():
+    global _FUSION_SCALER, _FUSION_CLF, _FUSION_ISO, _FUSION_BAND, _FUSION_FEATURE_NAMES
+    if _FUSION_SCALER is not None:
+        return True
+    if not _FUSION_SCALER_PATH.exists():
+        return False
+    try:
+        import pickle
+        with open(_FUSION_SCALER_PATH, "rb") as f:
+            _FUSION_SCALER = pickle.load(f)
+        with open(_FUSION_CLF_PATH, "rb") as f:
+            _FUSION_CLF = pickle.load(f)
+        with open(_FUSION_ISO_PATH, "rb") as f:
+            _FUSION_ISO = pickle.load(f)
+        with open(_FUSION_BAND_PATH, "rb") as f:
+            _FUSION_BAND = json.load(f)
+        with open(_FUSION_FEATURE_NAMES_PATH, "rb") as f:
+            _FUSION_FEATURE_NAMES = json.load(f)
+        return True
+    except Exception:
+        return False
+
+def _fusion_predict(ran: list[tuple[str, SignalOutput]]) -> tuple[float, float, str, list[dict[str, Any]], float, float] | None:
+    """Return (p_fake, uncertainty, confidence, drivers, q_lo, q_hi) or None."""
+    if not _load_fusion_artifacts():
+        return None
+    scaler = _FUSION_SCALER
+    clf = _FUSION_CLF
+    iso = _FUSION_ISO
+    band = _FUSION_BAND
+    feat_names = _FUSION_FEATURE_NAMES
+    if scaler is None or clf is None or iso is None or band is None or feat_names is None:
+        return None
+
+    # Build a dict of signal name -> features dict for applicable signals
+    signal_features = {}
+    for name, out in ran:
+        if out.applicable and hasattr(out, 'features') and out.features is not None:
+            signal_features[name] = out.features
+
+    # Assemble feature vector in the order used during training
+    feat_values = []
+    for fname in feat_names:
+        parts = fname.split("__", 1)
+        if len(parts) != 2:
+            return None
+        sig_name, feat_key = parts
+        if sig_name not in signal_features:
+            return None
+        val = signal_features[sig_name].get(feat_key)
+        if val is None:
+            return None
+        feat_values.append(val)
+
+    import numpy as np
+    X = np.array(feat_values, dtype=np.float64).reshape(1, -1)
+    X_scaled = scaler.transform(X)
+    p_raw = clf.predict_proba(X_scaled)[0, 1]
+    p_cal = float(iso.predict([p_raw])[0])
+    q_lo = band["q_lo"]
+    q_hi = band["q_hi"]
+
+    # Continuous uncertainty: 1 on the band edges, decaying to 0 at the
+    # extremes (confident real at 0, confident fake at 1).
+    if q_lo < p_cal < q_hi:
+        # Inside band: uncertainty = 1 (max uncertainty)
+        uncertainty = 1.0
+    elif p_cal <= q_lo:
+        # Below lower bound: certain real at 0, boundary at q_lo.
+        if q_lo > 0:
+            uncertainty = p_cal / q_lo
+        else:
+            uncertainty = 1.0
+        uncertainty = max(0.0, min(1.0, uncertainty))
+    else:  # p_cal >= q_hi
+        # Above upper bound: certain fake at 1, boundary at q_hi.
+        if q_hi < 1.0:
+            uncertainty = (1.0 - p_cal) / (1.0 - q_hi)
+        else:
+            uncertainty = 1.0
+        uncertainty = max(0.0, min(1.0, uncertainty))
+
+    high_cut, medium_cut = _confidence_cutoffs()
+    if uncertainty <= high_cut:
+        confidence = "high"
+    elif uncertainty <= medium_cut:
+        confidence = "medium"
+    else:
+        confidence = "low"
+
+    # Compute drivers: top 2 features by absolute coefficient (after scaling)
+    coef = clf.coef_[0]
+    abs_coef = np.abs(coef)
+    top_indices = np.argsort(abs_coef)[-2:][::-1]  # top 2
+    drivers: list[dict[str, Any]] = []
+    for idx in top_indices:
+        fname = feat_names[int(idx)]
+        # Map feature name to signal name and push direction
+        sig, feat = fname.split("__", 1)
+        # Direction: if coef positive, higher value pushes fake; else real
+        push = "fake" if coef[int(idx)] > 0 else "real"
+        drivers.append({
+            "signal": sig,
+            "feature": feat,
+            "push": push,
+            "weight": float(abs_coef[int(idx)]),
+        })
+
+    return p_cal, uncertainty, confidence, drivers, float(q_lo), float(q_hi)
 
 
 class DetectFailure(Exception):
@@ -288,7 +463,43 @@ def detect_image(raw: bytes, filename: str, media_type: str | None) -> dict[str,
     capture = _capture_or_raise(result)
 
     ran = _run_signals(capture)
-    verdict, p_fake, uncertainty, confidence, drivers = _verdict_and_scores(ran)
+    # Tiered scoring, best evidence first: calibrated fusion, then the
+    # borrowed CLIP probe, then the uncalibrated v0 heuristic. Every tier is
+    # advertised via `calibration_version` so no response ever pretends to be
+    # more calibrated than it is.
+    fusion_result = _fusion_predict(ran)
+    clip_model = None if fusion_result is not None else _get_clip_model()
+    if fusion_result is not None:
+        p_fake, uncertainty, confidence, drivers, q_lo, q_hi = fusion_result
+        verdict = "likely_fake" if p_fake > 0.5 else "likely_real"
+        calib_version = "fusion_v1"
+        band = {"q_lo": q_lo, "q_hi": q_hi}
+    elif clip_model is not None:
+        import torch
+        from PIL import Image
+
+        pil_img = Image.fromarray(capture.image_rgb)
+        tensor = clip_model.preprocess(pil_img).unsqueeze(0).to(clip_model.device)
+        with torch.no_grad():
+            logits = clip_model(tensor)
+            probs = torch.softmax(logits, dim=1)[0]
+        p_fake = float(probs[1].item())
+        uncertainty = 1.0 - abs(2.0 * p_fake - 1.0)
+        high_cut, medium_cut = _confidence_cutoffs()
+        if uncertainty <= high_cut:
+            confidence = "high"
+        elif uncertainty <= medium_cut:
+            confidence = "medium"
+        else:
+            confidence = "low"
+        verdict = "likely_fake" if p_fake > 0.5 else "likely_real"
+        drivers = []
+        calib_version = "clip_probe_v2"
+        band = {"q_lo": _V0_Q_LO, "q_hi": _V0_Q_HI}
+    else:
+        verdict, p_fake, uncertainty, confidence, drivers = _verdict_and_scores(ran)
+        calib_version = "uncalibrated"
+        band = {"q_lo": _V0_Q_LO, "q_hi": _V0_Q_HI}
 
     warnings: list[str] = []
     if verdict == "uncertain":
@@ -312,7 +523,7 @@ def detect_image(raw: bytes, filename: str, media_type: str | None) -> dict[str,
         "warnings": warnings,
         "model_version": MODEL_VERSION,
         "threshold_version": _threshold_version(),
-        "calibration_version": "uncalibrated",
+        "calibration_version": calib_version,
         "top_drivers": drivers,
         "band": {"q_lo": _V0_Q_LO, "q_hi": _V0_Q_HI},
     }
