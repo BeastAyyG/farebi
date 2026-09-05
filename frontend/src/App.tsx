@@ -14,6 +14,7 @@ import { VersionInfo } from './components/VersionInfo';
 import { PrivacyNotice } from './components/PrivacyNotice';
 import { EmptyState } from './components/EmptyState';
 import { ErrorState } from './components/ErrorState';
+import { ManualReviewPanel, type ManualDecision } from './components/ManualReviewPanel';
 import { Reveal } from './components/ui/Reveal';
 import { ResultSkeleton } from './components/ui/Skeleton';
 
@@ -28,6 +29,9 @@ export default function App() {
   const [error, setError] = useState<DetectError | null>(null);
   const [scenario, setScenario] = useState<MockScenario>('uncertain');
   const [announcement, setAnnouncement] = useState('');
+  // The human's call, kept per-result and cleared whenever a new one arrives.
+  const [decision, setDecision] = useState<ManualDecision | null>(null);
+  const [reviewNote, setReviewNote] = useState('');
 
   const verdictHeadingRef = useRef<HTMLHeadingElement>(null);
   const errorHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -78,6 +82,8 @@ export default function App() {
       setStatus('loading');
       setError(null);
       setResult(null);
+      setDecision(null);
+      setReviewNote('');
       setAnnouncement('Analysing capture.');
 
       try {
@@ -127,6 +133,8 @@ export default function App() {
     replacePreview(null);
     setResult(null);
     setError(null);
+    setDecision(null);
+    setReviewNote('');
     setStatus('idle');
     setAnnouncement('Capture cleared.');
   }, [replacePreview]);
@@ -221,6 +229,16 @@ export default function App() {
                     signals={result.signals}
                     result={result}
                     headingRef={verdictHeadingRef}
+                  />
+                </Reveal>
+                <Reveal index={1}>
+                  <ManualReviewPanel
+                    result={result}
+                    decision={decision}
+                    note={reviewNote}
+                    onDecide={setDecision}
+                    onNoteChange={setReviewNote}
+                    onAnnounce={setAnnouncement}
                   />
                 </Reveal>
                 <Reveal index={2}>

@@ -45,6 +45,9 @@ try {
   const { PrivacyNotice } = await server.ssrLoadModule('/src/components/PrivacyNotice.tsx');
   const { ErrorState } = await server.ssrLoadModule('/src/components/ErrorState.tsx');
   const { EmptyState } = await server.ssrLoadModule('/src/components/EmptyState.tsx');
+  const { ManualReviewPanel } = await server.ssrLoadModule(
+    '/src/components/ManualReviewPanel.tsx',
+  );
 
   const h = React.createElement;
   const clean = (s) =>
@@ -165,6 +168,37 @@ try {
     if (!body.includes(error.message)) fail(`error ${name}: message missing`);
     if (!body.includes(copy.PER_RESULT_WARNING)) fail(`error ${name}: per-result warning missing`);
     console.log(`  ok    error:${name}`);
+  }
+
+  // Reviewer decision panel. Not a frebi.md section, but it is the point of
+  // the whole product, so its agree/override logic is asserted here.
+  const REVIEW_CASES = [
+    ['override', fixtures.FIXTURE_LIKELY_FAKE, 'genuine', 'overrides the detector'],
+    ['agree', fixtures.FIXTURE_LIKELY_FAKE, 'manipulated', 'agrees with the detector'],
+    ['declined', fixtures.FIXTURE_UNCERTAIN, 'genuine', 'nothing to agree or disagree with'],
+    ['pending', fixtures.FIXTURE_LIKELY_REAL, null, 'Awaiting your decision'],
+  ];
+  for (const [name, result, dec, expected] of REVIEW_CASES) {
+    const html = renderToStaticMarkup(
+      h(ManualReviewPanel, {
+        result,
+        decision: dec,
+        note: '',
+        onDecide: () => {},
+        onNoteChange: () => {},
+      }),
+    );
+    const body = text(html);
+    if (!body.includes(expected)) fail(`manual review ${name}: expected "${expected}"`);
+    if ((html.match(/role="radio"/g) || []).length !== 3) {
+      fail(`manual review ${name}: expected three decision radios`);
+    }
+    if (!html.includes('role="radiogroup"')) fail(`manual review ${name}: missing radiogroup`);
+    // The panel must never imply it verifies identity or liveness.
+    if (!body.includes('does not verify liveness')) {
+      fail(`manual review ${name}: liveness disclaimer missing`);
+    }
+    console.log(`  ok    review:${name}`);
   }
 
   // §9.3 empty state

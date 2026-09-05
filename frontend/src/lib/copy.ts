@@ -132,6 +132,41 @@ export const API_ERROR = {
 export const EMPTY_STATE_TITLE = 'Upload an image to begin detection';
 export const EMPTY_STATE_HINT = 'JPEG or PNG, under 10MB';
 
+/* ------------------------------------------------------- manual review --- */
+
+/**
+ * Reviewer decision copy.
+ *
+ * Not mandated by frebi.md, but squarely on its thesis: the detector is a
+ * risk signal and the human makes the call. The strings below are written so
+ * that the recorded outcome always reads as a *person's* judgement, never as
+ * the model's.
+ */
+export const MANUAL_REVIEW = {
+  heading: 'Reviewer decision',
+  intro:
+    'The detector produces an estimate. You make the decision. Record your judgement below — it is stored with the request ID and both version strings so the outcome is auditable.',
+  pending: 'Awaiting your decision',
+  real: 'Genuine',
+  fake: 'Manipulated',
+  escalate: 'Escalate',
+  realHint: 'I am satisfied this capture is genuine',
+  fakeHint: 'I judge this capture to be manipulated',
+  escalateHint: 'I cannot decide — send for a second review',
+  agrees: 'Your decision agrees with the detector.',
+  overrides: 'Your decision overrides the detector.',
+  noModelView: 'The detector did not produce a verdict for this capture, so there is nothing to agree or disagree with.',
+  noteLabel: 'Reason for your decision',
+  noteRequired: 'A short reason is required when your decision differs from the detector.',
+  notePlaceholder: 'What did you see that decided it?',
+  recorded: 'Decision recorded',
+  change: 'Change decision',
+  copy: 'Copy decision record',
+  copied: 'Copied',
+  disclaimer:
+    'Recording a decision here does not verify liveness or identity ownership, and does not retrain the detector. It is an audit note attached to this request.',
+} as const;
+
 /* ---------------------------------------------------------------- guard -- */
 
 const BANNED = [

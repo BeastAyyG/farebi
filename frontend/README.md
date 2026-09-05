@@ -154,8 +154,9 @@ Desktop (≥1024px) is two columns, 40 / 60:
 | Left (40%) | Right (60%) |
 | --- | --- |
 | `UploadPanel` | `ResultCard` — verdict, probability, confidence, band |
-| `ImagePreview` | `SignalList` |
-| `QualityWarnings` | `HeatmapViewer` |
+| `ImagePreview` | `ManualReviewPanel` — the human decision |
+| `QualityWarnings` | `SignalList` |
+| | `HeatmapViewer` |
 | | `VersionInfo` |
 
 `PrivacyNotice` is pinned full-width at the bottom of the page. Below 1024px
@@ -223,6 +224,33 @@ Error handling (§9.2), all in `src/api/client.ts`:
 | §11 What-if Slider | `components/WhatIfSlider.tsx` (collapsed, labelled illustrative) |
 | §11 Reason Code Explorer | `components/SignalRow.tsx` + `lib/signalDocs.ts` |
 | §11 Signal Radar Chart | `components/SignalRadar.tsx`, rendered at the top of `SignalList` |
+| Manual reviewer decision | `components/ManualReviewPanel.tsx` |
+
+## Manual review
+
+`FAREBI.md` is emphatic that the detector is a risk signal and never an
+autonomous rejection engine. That only means something if the human judgement
+has somewhere to land, so `ManualReviewPanel` gives the reviewer three
+outcomes — **Genuine**, **Manipulated**, **Escalate** — and treats the result
+as authoritative over the model.
+
+Two deliberate frictions:
+
+- **Overriding the detector requires a written reason.** Disagreements between
+  a model and a trained reviewer are the single most valuable events this
+  system produces, and an unexplained one is worthless six weeks later. When
+  the decision contradicts the verdict, focus jumps straight to the note field
+  and *Copy decision record* refuses until it is filled in.
+- **The record names the human as its author.** *Copy decision record* emits a
+  plain-text audit block with the request ID, the detector's estimate, all
+  three version strings, the reviewer's decision, whether it agreed or
+  overrode, and the reason — under a heading that marks the reviewer decision
+  as the authoritative outcome. It can never be mistaken for model output.
+
+Where the detector declined to decide (`uncertain`, `unable_to_assess`) the
+panel says there is no position to agree or disagree with, rather than
+inventing one. The decision resets on every new capture; nothing is persisted,
+because retention would need its own lawful basis.
 
 The Social Media Recompression Simulator from §11 is **not** implemented: it
 would need a server round trip per variant to say anything truthful, and a
