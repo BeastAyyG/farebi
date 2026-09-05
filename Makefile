@@ -6,7 +6,7 @@ UV          ?= uv
 PYTEST_ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help install lock lint format type test test-all layers smoke clean serve ui docker-up docker-down
+.PHONY: help install install-minimal lock lint format type test test-all layers smoke check clean serve ui ui-install ui-check docker-up docker-down
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -49,8 +49,14 @@ check: lint type test smoke ## Everything CI runs
 serve: ## Start the API (Phase 08; not wired yet)
 	$(PYTHON) -m uvicorn farebi.api.main:app --reload --port 8000
 
-ui: ## Start the reviewer frontend (Phase 08b; not wired yet)
+ui-install: ## Install frontend dependencies
+	cd frontend && npm install
+
+ui: ## Start the reviewer frontend (mock mode works with no API running)
 	cd frontend && npm run dev
+
+ui-check: ## Frontend typecheck + contrast audit + render smoke test
+	cd frontend && npm run check
 
 docker-up: ## docker compose up --build
 	docker compose up --build

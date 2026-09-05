@@ -1,0 +1,110 @@
+/* =====================================================================
+   Farebi design tokens
+   ---------------------------------------------------------------------
+   Every colour used by the UI is declared here and only here. Components
+   reference Tailwind utilities that map onto these variables, so there are
+   no hard-coded hex values anywhere in src/components.
+
+   Palette brief: calm, warm, "forensic lab meets stationery".
+   Never pure #FFF, never pure #000.
+   ===================================================================== */
+
+:root {
+  /* --- foundations -------------------------------------------------- */
+  --bg: #f2efe7; /* Warm Linen   */
+  --surface: #faf8f3; /* Paper        */
+  --surface-sunken: #eae5d9; /* Oat          */
+  --border: #dce4e8; /* Slate Fog    */
+  --border-strong: #c4cfd6; /* Pewter       */
+  --text: #1d2a3a; /* Deep Slate   */
+  --text-2: #3e4e5e; /* Harbor       */
+  --text-3: #5a6775; /* Driftwood    */
+  --focus: #3368a0;
+
+  /* --- primary: ocean blue ------------------------------------------ */
+  --blue-50: #eef3f8;
+  --blue-100: #dce7f1;
+  --blue-200: #b5cde3;
+  --blue-300: #8fb2d3;
+  --blue-500: #3368a0;
+  --blue-600: #2a578a;
+  --blue-700: #1f4470;
+
+  /* --- secondary: sky steel ----------------------------------------- */
+  --sky-50: #eff5f8;
+  --sky-100: #dfedf3;
+  --sky-200: #b9d6e2;
+  --sky-500: #66a3bf;
+  --sky-600: #4f8ba7;
+
+  /* --- tertiary: mist aqua ------------------------------------------ */
+  --aqua-50: #edf5f3;
+  --aqua-100: #c8dfdb;
+  --aqua-300: #a3c8c1;
+  --aqua-500: #79aba2;
+
+  /* --- accents ------------------------------------------------------- */
+  --terracotta-50: #fbefe9;
+  --terracotta-100: #f4d3c5;
+  --terracotta-500: #d97757;
+  --terracotta-700: #904b33;
+
+  --ochre-50: #fbf3e6;
+  --ochre-100: #f4e1c2;
+  --ochre-500: #e0ad6b;
+  --ochre-700: #805e2d;
+
+  --sage-50: #eef3f0;
+  --sage-100: #d9e5de;
+  --sage-500: #88a795;
+  --sage-700: #4d695a;
+
+  /* --- verdicts ------------------------------------------------------
+     `anchor` is the exact hue mandated by frebi.md §1.1 and is retained
+     for the stripe / dot / legend so the spec contract is visibly met.
+     `fill` / `ink` / `border` are the harmonised pastel surface variants
+     that keep body text at >= 4.5:1 contrast.
+     ------------------------------------------------------------------ */
+  --v-real-anchor: #22c55e;
+  --v-real-fill: #ddebe2;
+  --v-real-ink: #2f6b4a;
+  --v-real-border: #88a795;
+
+  --v-fake-anchor: #ef4444;
+  --v-fake-fill: #f7ded4;
+  --v-fake-ink: #8f3f27;
+  --v-fake-border: #d97757;
+
+  --v-unc-anchor: #eab308;
+  --v-unc-fill: #f6e8cc;
+  --v-unc-ink: #7a5a1f;
+  --v-unc-border: #e0ad6b;
+
+  --v-na-anchor: #6b7280;
+  --v-na-fill: #e6eaed;
+  --v-na-ink: #3f4c59;
+  --v-na-border: #c4cfd6;
+
+  /* --- elevation & shape --------------------------------------------- */
+  --radius-card: 12px;
+  --shadow-card: 0 1px 2px rgba(29, 42, 58, 0.06);
+  --motion: 170ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* --- attribution heatmap legend ramp -------------------------------- */
+  --heat-real-2: #3368a0;
+  --heat-real-1: #66a3bf;
+  --heat-mid: #f2efe7;
+  --heat-fake-1: #e0ad6b;
+  --heat-fake-2: #d97757;
+  --heat-fake-3: #a9583c;
+}
+
+/* Colour tokens are stable across colour schemes: this is a forensic tool
+   and the reviewer's judgement should not shift with an OS toggle. */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion: 0ms;
+  }
+}
