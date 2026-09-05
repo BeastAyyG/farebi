@@ -19,6 +19,8 @@ declare -a repos=(
   "https://github.com/flyingby/Awesome-Deepfake-Generation-and-Detection|Awesome-Deepfake-Gen-Detect"
   "https://github.com/qiqitao77/Awesome-Comprehensive-Deepfake-Detection|Awesome-Comprehensive-Deepfake-Detection"
   "https://github.com/Purdue-M2/AI-Face-FairnessBench|AI-Face-FairnessBench"
+  "https://github.com/yermandy/GenD|GenD"
+  "https://github.com/polimi-ispl/synthetic-image-detection|synthetic-image-detection"
 )
 
 for entry in "${repos[@]}"; do

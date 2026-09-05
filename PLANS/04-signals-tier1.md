@@ -15,7 +15,7 @@ of 0.75–0.85. If you see 0.99, suspect leakage before celebrating.**
 | --- | --- | --- |
 | `signals/fft.py` | Frequency domain | Radial power-spectrum statistics, GAN upsampling grid artefacts. Vary generator ψ — low-ψ is easy, high-ψ is not. |
 | `signals/texture.py` | Texture & spatial artefacts | Local binary patterns, noise residual inconsistency, edge statistics. Likely degrades under JPEG — measure it. |
-| `signals/vit_clip.py` | **Neural baseline** | Frozen CLIP-ViT features + linear probe (UnivFD approach). **Do not fine-tune a ViT from scratch first** — the linear probe generalises across generators far better and trains in minutes. |
+| `signals/vit_clip.py` | **Neural baseline** | Frozen CLIP-ViT features + linear probe (UnivFD approach). **Do not fine-tune a ViT from scratch first** — the linear probe generalises across generators far better and trains in minutes. Upgrade path: CLIPping-the-Deception CoOp Prompt Tuning (keeps the text encoder, +5% mAP same envelope); alternative: GenD LN-tuning (`vendor/GenD`, HF `yermandy/gend`). Cross-check against AIDE hybrid (`meet4150/AIDE_image_detector`, FFT+semantic, ICLR 2025). Weights install in Phase 06 — no torch in `.venv` yet. |
 | `signals/prnu.py` | Sensor-noise presence | Wavelet (Mihçak) denoising then noise-residual statistics. `fastNlMeansDenoising` is prototyping-only. **Presence, not matching.** |
 | `signals/replay_detect.py` | Screen-replay detection | Moiré (FFT peak at display pixel pitch), display colour gamut, specular rectangle, flat depth. **Mandatory companion to PRNU.** |
 | `signals/corneal.py` | Corneal reflection consistency | MediaPipe iris landmarks localise the cornea. Check: reflections exist; both eyes reflect the same scene; count and position are plausible. |

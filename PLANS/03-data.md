@@ -75,6 +75,8 @@ Each check emits `PASS` / `WARN` / `FAIL`. `FAIL` blocks training.
 | GAN fakes | Self-generated StyleGAN2/3 | Vary truncation ψ — low-ψ faces are "too perfect" and easy; high-ψ are harder |
 | Diffusion fakes | SD 1.5 / SDXL / Flux, Midjourney sample set | Prompts like "passport photo, plain background, neutral expression" — a fantasy background is trivially easy |
 | Face swaps | FaceForensics++, Celeb-DF v2, DFDC + fresh InSwapper/SimSwap/roop | Old datasets are too easy; current open-source swappers are mandatory |
+| Held-out generators | **DF40** (40 deepfake techniques, plugs into the DeepfakeBench workflow) | The cross-generator eval set — absent from train/val/calibration by construction |
+| In-the-wild | **Deepfake-Eval-2024** (real-world 2024 content) | Academic-benchmark SOTAs lost ~45% image-AUC here; this is the ceiling check |
 | Replay attacks | Photograph fakes off phone/laptop screens; virtual camera | What real fraudsters do. **Defeats PRNU** — see §04 |
 | rPPG validation | UBFC-rPPG, PURE, COHFACE | Ground-truth HR: validate the pulse extractor on real people first |
 | PRNU validation | VISION, Dresden Image Database | Many real devices for noise-presence calibration |
@@ -95,6 +97,10 @@ the repo. Consent status for the self-capture set is recorded here and nowhere e
 4. **Validate rPPG on real humans before using it on fakes.** If the pulse extractor cannot
    recover ground-truth HR on UBFC, the signal is dead on arrival and we should find out
    cheaply.
+5. **Train neural baselines on paired real↔fake frames from the same source video.**
+   GenD (WACV 2026, `vendor/GenD`) shows unpaired training invites shortcut learning
+   and destroys cross-dataset generalisation; paired training is the single biggest
+   lever. Enforce pairing in `generate_splits.py` and assert it in a test.
 
 ## Exit gate
 

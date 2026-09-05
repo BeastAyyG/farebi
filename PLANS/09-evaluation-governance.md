@@ -36,7 +36,14 @@ Where a bucket fails:
 Run a red-team window: an attacker with knowledge of the system tries to beat it for one week
 (targeted compression, re-encoding, filters, screen replay, injected video, prompt-crafted
 diffusion). Every success is written into `THREAT_MODEL.md` and `RISK_REGISTER.md`, and the
-successful sample is added to the evaluation set.
+successful sample is added to the evaluation set. Named attacks that must be attempted:
+skin-tone postprocessing to spoof the rPPG signal, SD-laundering (strength-0
+autoencoder pass) to strip PRNU/camera traces off real content, and the
+`prnu-copy-attack` fingerprint transplant (`vendor/prnu-copy-attack`).
+
+Also evaluate once on **Deepfake-Eval-2024** (in-the-wild 2024 content) and report the
+gap to the academic splits — published SOTAs lost ~45% image-AUC there, so treat our
+Eval-2024 number as the honest ceiling, not a regression.
 
 ### Tests
 
