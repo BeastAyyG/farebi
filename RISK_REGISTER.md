@@ -70,5 +70,30 @@ evidence.
   power vs a true same-camera fingerprint. Conclusion: noise *presence* is
   spoofable by transplant — the structural fix is device-enrolment
   *matching* (store the fingerprint at first verification), which is future
-  work beyond Phase 04. Digital transplant is not screen replay, so
-  `replay_detect` is not the mitigation here.
+ work beyond Phase 04. Digital transplant is not screen replay, so
+ `replay_detect` is not the mitigation here.
+
+## STANDING — `signals/replay_detect.py` leans on a non-screen cue
+
+- 2026-09-05 replay-simulation probe (`quick256-replay`, n=441 real vs
+  replayed-fake, `ScreenReplaySimulator(seed=7)` over the 240 sdxl/flux
+  fakes, new `scripts/attack_replay_sim.py`): all five KEEP signals hold —
+  replay_detect **0.862** (identical to clean), prnu 0.878, texture 0.828,
+  fft 0.796, CA 0.931. Kept 441/480 (replay preserves sharpness better
+  than laundering).
+- Clean-fake vs replayed-fake follow-up (n=192+226, isolates the replay
+  transform): `replay_moire_peak` moves (**0.828** — the screen cue
+  registers) but `replay_midband_ratio` does not (**0.568**) — yet midband
+  is the feature every real-vs-fake verdict leans on. Design tension: the
+  feature that detects replay cannot lean (Dresden reals hit 28-425x
+  peaks), and the feature that leans does not respond to replay. A
+  replayed REAL photo (real PRNU + screen moire) would score
+  midband-normal + peak-high = likely MISS under current weighting.
+- Consequence: replay_detect's KEEP verdict is currently carried by a
+  fake-content cue, not a screen cue. Do not claim replay coverage until
+  photographed-screen positives — especially replayed REALs — from the
+  self-capture campaign are in the harness.
+- Caveats: simulator pitch (2-6px) sits inside the detection band
+  (0.05-0.45), so separation is partly plumbing validation; simulated
+  replays carry no photographing-camera PRNU, so PRNU numbers on this
+  probe are simulation artifacts — neither credited nor charged.
