@@ -32,6 +32,17 @@ __all__ = ["FftSignal"]
 #: harness calibration, not a tuned boundary.
 _BLOCK_FLAG: float = 1.8
 _EPS: float = 1e-6
+#: Minimum usable face-crop edge in px. Below this the spectrum has too few
+#: bins for band shares to mean anything, so the crop is rejected.
+_MIN_CROP_PX: int = 32
+#: High-band edge as a fraction of Nyquist (corner == 1.0). Band edges are
+#: methodology constants, not decision thresholds: they define the feature,
+#: while the lean/no-lean line lives in ``_BLOCK_FLAG`` above.
+_HIGH_BAND_R: float = 0.4
+#: Mid/high-band edge, same status as ``_HIGH_BAND_R``.
+_MIDHIGH_BAND_R: float = 0.15
+#: Minimum edge for the 8x8 block estimate: needs at least two block rows/cols.
+_MIN_BLOCK_PX: int = 16
 
 
 def _clip_box(
@@ -40,7 +51,7 @@ def _clip_box(
     x1, y1, x2, y2 = (int(v) for v in box)
     x1, y1 = max(0, x1), max(0, y1)
     x2, y2 = min(width, x2), min(height, y2)
-    if x2 - x1 < 32 or y2 - y1 < 32:
+    if x2 - x1 < _MIN_CROP_PX or y2 - y1 < _MIN_CROP_PX:
         return None
     return (x1, y1, x2, y2)
 
@@ -61,7 +72,7 @@ def _radial_bands(
         ((xx - width / 2) / (width / 2)) ** 2 + ((yy - height / 2) / (height / 2)) ** 2
     )
     radius = radius / math.sqrt(2.0)  # corner == 1.0
-    return (radius > 0.4), (radius > 0.15)
+    return (radius > _HIGH_BAND_R), (radius > _MIDHIGH_BAND_R)
 
 
 def _blockiness(face: npt.NDArray[np.float64]) -> float:
@@ -72,7 +83,7 @@ def _blockiness(face: npt.NDArray[np.float64]) -> float:
     region with different compression).
     """
     height, width = face.shape
-    if height < 16 or width < 16:
+    if height < _MIN_BLOCK_PX or width < _MIN_BLOCK_PX:
         return 1.0
     vert = np.abs(np.diff(face, axis=1))
     edge_cols = np.array([(j + 1) % 8 == 0 for j in range(vert.shape[1])])

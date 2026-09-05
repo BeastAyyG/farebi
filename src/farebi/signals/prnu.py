@@ -55,6 +55,12 @@ _RATIO_FLAG: float = 2.0
 #: Vendor ``noise_extract`` default: sigma=5 on the 0-255 scale.
 _NOISE_VAR: float = 25.0
 _EPS: float = 1e-6
+#: Minimum usable face-crop edge in px. Below this the residual has too few
+#: samples for an energy estimate, so the crop is rejected.
+_MIN_CROP_PX: int = 32
+#: Minimum background pixels for the comparison baseline. Below this the
+#: variance is a small-sample artefact, so the baseline reports 0.0.
+_MIN_BG_PX: int = 1024
 
 
 def _clip_box(
@@ -64,7 +70,7 @@ def _clip_box(
     x1, y1, x2, y2 = (int(v) for v in box)
     x1, y1 = max(0, x1), max(0, y1)
     x2, y2 = min(width, x2), min(height, y2)
-    if x2 - x1 < 32 or y2 - y1 < 32:
+    if x2 - x1 < _MIN_CROP_PX or y2 - y1 < _MIN_CROP_PX:
         return None
     return (x1, y1, x2, y2)
 
@@ -140,7 +146,7 @@ def _background_energy(full_gray: npt.NDArray[np.uint8], face: tuple[int, int, i
     mask = np.ones_like(residual, dtype=bool)
     mask[ey1:ey2, ex1:ex2] = False
     bg = residual[mask]
-    if bg.size < 1024:
+    if bg.size < _MIN_BG_PX:
         return 0.0
     return float(np.var(bg))
 

@@ -22,6 +22,15 @@ from farebi.signals.base import Signal, SignalOutput, reason
 
 __all__ = ["ReplayDetectSignal"]
 
+#: Minimum usable face-crop edge in px. Below this the spectrum has too few
+#: bins for band shares to mean anything, so the crop is rejected.
+_MIN_CROP_PX: int = 32
+#: Moiré band edges as a fraction of Nyquist (corner == 1.0). Methodology
+#: constants that define the feature, not decision thresholds: the display
+#: pitch is a few px (low/mid bands) and the DC neighbourhood is excluded so
+#: the peak cannot be the image mean.
+_MOIRE_BAND_LO: float = 0.05
+_MOIRE_BAND_HI: float = 0.45
 _EPS: float = 1e-6
 
 
@@ -31,7 +40,7 @@ def _clip_box(
     x1, y1, x2, y2 = (int(v) for v in box)
     x1, y1 = max(0, x1), max(0, y1)
     x2, y2 = min(width, x2), min(height, y2)
-    if x2 - x1 < 32 or y2 - y1 < 32:
+    if x2 - x1 < _MIN_CROP_PX or y2 - y1 < _MIN_CROP_PX:
         return None
     return (x1, y1, x2, y2)
 
@@ -49,7 +58,7 @@ def _moire_scores(face_gray: npt.NDArray[np.uint8]) -> tuple[float, float]:
     radius = radius / float(np.sqrt(2.0))
     # Moiré beating lives in the low/mid bands (display pitch is a few px);
     # keep the DC neighbourhood out so the peak cannot be the image mean.
-    band = mag[(radius > 0.05) & (radius < 0.45)]
+    band = mag[(radius > _MOIRE_BAND_LO) & (radius < _MOIRE_BAND_HI)]
     if band.size == 0:
         return 1.0, 0.0
     peak_ratio = float(band.max() / (np.median(band) + _EPS))

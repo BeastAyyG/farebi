@@ -27,6 +27,12 @@ __all__ = ["TextureSignal"]
 #: Natural photos reach ~1.0 (depth of field, uneven light), so the v1 line
 #: sits above all measured real photos. Starting point for harness calibration.
 _RATIO_FLAG: float = 1.5
+#: Minimum usable face-crop edge in px. Below this the Laplacian has too
+#: little support, so the crop is rejected.
+_MIN_CROP_PX: int = 32
+#: Minimum background pixels for the comparison baseline. Below this the
+#: variance is a small-sample artefact, so the baseline is unavailable.
+_MIN_BG_PX: int = 4096
 
 
 def _clip_box(
@@ -35,7 +41,7 @@ def _clip_box(
     x1, y1, x2, y2 = (int(v) for v in box)
     x1, y1 = max(0, x1), max(0, y1)
     x2, y2 = min(width, x2), min(height, y2)
-    if x2 - x1 < 32 or y2 - y1 < 32:
+    if x2 - x1 < _MIN_CROP_PX or y2 - y1 < _MIN_CROP_PX:
         return None
     return (x1, y1, x2, y2)
 
@@ -63,7 +69,7 @@ def _background_stats(
     ex2, ey2 = min(width, x2 + fw // 4), min(height, y2 + fh // 4)
     mask = np.ones((height, width), dtype=bool)
     mask[ey1:ey2, ex1:ex2] = False
-    if int(mask.sum()) < 4096:
+    if int(mask.sum()) < _MIN_BG_PX:
         return None
     # Per-pixel Laplacian needs a neighbourhood; approximate the background
     # sharpness on the downmasked frame is biased, so compute on the full
