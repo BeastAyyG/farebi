@@ -1,0 +1,84 @@
+{
+  "dataset": "data\\interim\\quick_features_v2.csv",
+  "n_samples": 503,
+  "n_features": 18,
+  "features": [
+    "fft__fft_high_freq_ratio",
+    "fft__fft_spectral_peak",
+    "fft__fft_blockiness",
+    "texture__texture_face_sharpness",
+    "texture__texture_bg_sharpness",
+    "texture__texture_sharpness_logratio",
+    "texture__texture_residual_logratio",
+    "prnu__prnu_face_energy",
+    "prnu__prnu_bg_energy",
+    "prnu__prnu_face_bg_logratio",
+    "prnu__prnu_face_mean_abs",
+    "replay_detect__replay_moire_peak",
+    "replay_detect__replay_midband_ratio",
+    "chromatic_aberration__ca_rg_slope",
+    "chromatic_aberration__ca_bg_slope",
+    "chromatic_aberration__ca_slope_avg",
+    "chromatic_aberration__ca_mean",
+    "chromatic_aberration__ca_edge_patches"
+  ],
+  "mean_auc_raw": 0.9127033849179389,
+  "mean_auc_cal": 0.9057527564492215,
+  "mean_uncertain_rate": 0.2078987150005196,
+  "mean_error_given_certain": 0.1161466909575027,
+  "notes": [
+    "isotonic fit in-sample on train fold: calibration mildly optimistic.",
+    "single 70/30-style source split per fold (n_splits=2): directional only.",
+    "best single signal on this data is prnu at 0.907 cross-source AUC."
+  ],
+  "folds": [
+    {
+      "held_out": [
+        "ffhq1024",
+        "flux-celeba"
+      ],
+      "n_train": 318,
+      "n_test": 185,
+      "auc_raw": 0.910807453416149,
+      "auc_cal": 0.9079503105590061,
+      "brier_raw": 0.09983941483159771,
+      "brier_cal": 0.10140680076452412,
+      "q_lo": 0.21428571428571427,
+      "q_hi": 0.5249999999999986,
+      "uncertain_rate": 0.21081081081081077,
+      "error_given_certain": 0.08904109589041095
+    },
+    {
+      "held_out": [
+        "celeba-hq",
+        "flux"
+      ],
+      "n_train": 324,
+      "n_test": 179,
+      "auc_raw": 0.8961992136304063,
+      "auc_cal": 0.8873525557011795,
+      "brier_raw": 0.12940508477711227,
+      "brier_cal": 0.13680173122110556,
+      "q_lo": 0.1,
+      "q_hi": 0.25,
+      "uncertain_rate": 0.24022346368715086,
+      "error_given_certain": 0.19852941176470587
+    },
+    {
+      "held_out": [
+        "ffhq",
+        "sdxl"
+      ],
+      "n_train": 364,
+      "n_test": 139,
+      "auc_raw": 0.9311034877072613,
+      "auc_cal": 0.9219554030874786,
+      "brier_raw": 0.07644478824514288,
+      "brier_cal": 0.07317874371369856,
+      "q_lo": 0.17647058823529413,
+      "q_hi": 0.55,
+      "uncertain_rate": 0.17266187050359716,
+      "error_given_certain": 0.06086956521739131
+    }
+  ]
+}

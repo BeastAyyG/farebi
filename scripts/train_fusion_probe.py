@@ -96,8 +96,8 @@ def main() -> int:
         "mean_error_given_certain": float(np.mean([f["error_given_certain"] for f in fold_rows])),
         "notes": [
             "isotonic fit in-sample on train fold: calibration mildly optimistic.",
-            "single 70/30-style source split per fold (n_splits=2): directional only.",
-            "best single signal on this data is prnu at 0.907 cross-source AUC.",
+            "one held-out group per side per fold (GroupKFold by source): directional only.",
+            "compare against the per-signal harness AUCs in the probe report.",
         ],
         "folds": fold_rows,
     }

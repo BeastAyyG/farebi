@@ -114,7 +114,7 @@ def main() -> int:
             "isotonic + band fit on held-out 1/3 calibration slice of train fold.",
             "inner fit/cal split is random stratified, not by group (train fold "
             "holds one real + one fake group); leakage touches only the 1-D map.",
-            "same rows, outer folds and seed as fusion_probe_quick256.json: "
+            "same rows, outer folds and seed as the fusion-probe report for this dataset: "
             "AUC deltas isolate calibration discipline.",
         ],
         "folds": fold_rows,
