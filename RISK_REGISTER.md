@@ -42,10 +42,19 @@ evidence.
 
 ## STANDING — PRNU vs laundered fakes
 
-- PRNU keeps—— **0.907** on quick256 — but the real groups are camera
+- PRNU keeps — **0.907** on quick256 — but the real groups are camera
   photos and the fake groups are raw diffusion outputs. Sensor-noise
   separation is expected there. The polimi-ispl synthetic-laundering
   finding (recompression/resize erases the noise signature) means this
   number must be re-measured on laundered fakes before it counts as
   production evidence. PRNU must never fire alone (`requires:
   [replay_detect]` is contractual).
+- 2026-09-05 red-team probe (`quick256-laundered`, n=354, real vs
+  128px-downscale + JPEG-q75 + upscale + JPEG-q92 fakes): PRNU **0.939**,
+  replay_detect 0.944, texture 0.918, CA 0.973, fft 0.821 — all five
+  KEEP signals survive this laundering recipe, and AUCs rose vs clean,
+  consistent with resampling collapsing residual structure in fakes while
+  real sensor noise persists. Caveat: this is our own torch-free recipe,
+  not the exact polimi pipeline — re-validate against their laundered
+  set (and the prnu-copy-attack repo) before the Phase-04 gate closes.
+  High-res re-validation still open (no high-res fakes on hand).

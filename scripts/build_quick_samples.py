@@ -10,6 +10,7 @@ iris landmark 468 must lie inside the EYE_LEFT contour bounding box
 
 Usage:
     .venv/Scripts/python.exe scripts/build_quick_samples.py [--limit N]
+        [--manifest PATH --out PATH]
 """
 
 from __future__ import annotations
@@ -57,6 +58,18 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="max rows per group (0 = all)")
     ap.add_argument(
+        "--manifest",
+        type=pathlib.Path,
+        default=MANIFEST,
+        help="input manifest CSV (default: quick-shim manifest)",
+    )
+    ap.add_argument(
+        "--out",
+        type=pathlib.Path,
+        default=OUT,
+        help="output Sample pickle path (default: quick-shim pickle)",
+    )
+    ap.add_argument(
         "--min-eye-px",
         type=float,
         default=24.0,
@@ -99,7 +112,7 @@ def main() -> None:
         f"min_blur_score={args.min_blur} (app.yaml {base.quality.min_blur_score})"
     )
 
-    with open(MANIFEST, newline="") as fh:
+    with open(args.manifest, newline="") as fh:
         rows = list(csv.DictReader(fh))
     if args.limit:
         by_group: dict[str, int] = {}
@@ -146,10 +159,10 @@ def main() -> None:
                 )
             )
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT, "wb") as fh:
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.out, "wb") as fh:
         pickle.dump(samples, fh)
-    print(f"kept {len(samples)}/{len(rows)} -> {OUT}")
+    print(f"kept {len(samples)}/{len(rows)} -> {args.out}")
     print(f"iris-mapping checks passed on {checked} real captures")
     for key in sorted(drops):
         print(f"  drop {key}: {drops[key]}")

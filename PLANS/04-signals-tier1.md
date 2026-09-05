@@ -77,8 +77,10 @@ let `applicable=False` handle the rest.
       recorded in `RISK_REGISTER.md`.
       2026-09-05: corneal (KILL-01) + geometry (KILL-02) deleted; vit_clip kept as
       Phase-06 stub (environmental kill, see RISK_REGISTER.md).
-- [ ] No signal contains a hardcoded decision threshold — enforced by a lint check that greps
+- [x] No signal contains a hardcoded decision threshold — enforced by a lint check that greps
       for float literals in comparison positions.
+      2026-09-05: `tests/unit/test_signal_thresholds.py` AST-scans `signals/`;
+      band edges / size floors live behind named constants.
 
 ## Risks
 
